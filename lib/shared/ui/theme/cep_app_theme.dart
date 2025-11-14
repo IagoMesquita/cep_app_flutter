@@ -59,4 +59,32 @@ sealed class CepAppTheme {
       titleMedium: TextStyle(color: CepAppColors.blackColor, fontSize: 20),
     ),
   );
+
+  static final ThemeData dark = light.copyWith(
+    brightness: Brightness.dark,
+    tabBarTheme: const TabBarThemeData(
+      unselectedLabelColor: Colors.grey,
+      labelColor: CepAppColors.primaryColor,
+    ),
+    appBarTheme: light.appBarTheme.copyWith(backgroundColor: Colors.black87),
+    scaffoldBackgroundColor: CepAppColors.darkBgColor,
+    colorScheme: light.colorScheme.copyWith(
+      brightness: Brightness.dark,
+      background: CepAppColors.darkBgColor,
+      onBackground: CepAppColors.darkBgColor,
+      surface: CepAppColors.darkBgColor,
+      onSurface: CepAppColors.darkBgColor,
+    ),
+    textTheme: light.textTheme.copyWith(
+      bodyMedium: light.textTheme.bodyMedium!.copyWith(
+        color: CepAppColors.whiteColor,
+      ),
+      titleMedium: light.textTheme.titleMedium!.copyWith(
+        color: CepAppColors.whiteColor,
+      ),
+    ),
+    inputDecorationTheme: light.inputDecorationTheme.copyWith(
+      fillColor: CepAppColors.blackColor,
+    ),
+  );
 }
