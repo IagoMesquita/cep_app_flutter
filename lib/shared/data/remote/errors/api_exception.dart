@@ -16,6 +16,6 @@ final class ApiException extends ApiBaseModel implements Exception {
     required this.identifier,
     required this.errorStatus,
     required super.statusCode,
-    super.statusMessage,
+    super.message,
   });
 }
