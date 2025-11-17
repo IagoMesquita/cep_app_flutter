@@ -42,7 +42,7 @@ final class DioService implements ApiService {
           identifier: identifier,
           statusCode: 1, //Status code do front. Documentar para a equipe.
           errorStatus: ErrorStatus.noConnection,
-          message: ConstStrings.kNoInternetConnectionMessage
+          message: ConstStrings.kNoInternetConnectionMessage,
         ),
       );
       // Exceptions do Dio que tratam as chamadas http
@@ -66,6 +66,18 @@ final class DioService implements ApiService {
               dioError.message ??
               dioError.response?.data?['message'] ??
               ConstStrings.kDefaultError,
+        ),
+      );
+    } catch (e, st) {
+      final identifier = 'GenericException on Get Request';
+      log(identifier, error: e, stackTrace: st);
+
+      return Left(
+        ApiException(
+          identifier: identifier,
+          statusCode: 3,
+          errorStatus: ErrorStatus.unknown,
+          message: ConstStrings.kDefaultError,
         ),
       );
     }
