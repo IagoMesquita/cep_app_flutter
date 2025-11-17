@@ -14,6 +14,9 @@ final class DioService implements ApiService {
     String endPoint, {
     Map<String, dynamic>? queryParams,
   }) {
-    try {} catch (e) {}
+    try {
+      // Desestruturando Response que vem do DIO
+      final Response(:data, :statusCode, :statusMessage) = await _dio.get(endPoint, queryParameters: queryParams);
+    } catch (e) {}
   }
 }
