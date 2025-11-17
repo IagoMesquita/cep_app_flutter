@@ -6,6 +6,6 @@ final class ApiResponseModel<T> extends ApiBaseModel {
   const ApiResponseModel({
     required this.data,
     required super.statusCode,
-    super.message,
+    super.statusMessage,
   });
 }

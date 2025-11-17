@@ -1,6 +1,6 @@
 class ApiBaseModel {
-  final int statusCode;
-  final String? message;
+  final int? statusCode;
+  final String? statusMessage;
 
-  const ApiBaseModel({required this.statusCode, this.message});
+  const ApiBaseModel({required this.statusCode, this.statusMessage});
 }
