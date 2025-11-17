@@ -13,10 +13,21 @@ final class DioService implements ApiService {
   Future<Either<ApiException, ApiResponseModel>> get<T>(
     String endPoint, {
     Map<String, dynamic>? queryParams,
-  }) {
+  }) async {
     try {
       // Desestruturando Response que vem do DIO
-      final Response(:data, :statusCode, :statusMessage) = await _dio.get(endPoint, queryParameters: queryParams);
+      final Response(:data, :statusCode, :statusMessage) = await _dio.get(
+        endPoint,
+        queryParameters: queryParams,
+      );
+
+      return Right(
+        ApiResponseModel<T>(
+          data: data,
+          statusCode: statusCode,
+          statusMessage: statusMessage,
+        ),
+      );
     } catch (e) {}
   }
 }
