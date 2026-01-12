@@ -31,17 +31,17 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     return error;
   }
 
-  void toggleTheme() {
+  void _toggleTheme() {
     state = ThemeState(
       themeStateEnum: state.themeStateEnum == ThemeStateEnum.dark
-          ? ThemeStateEnum.dark
-          : ThemeStateEnum.light,
+          ? ThemeStateEnum.light
+          : ThemeStateEnum.dark,
     );
   }
 
   Future<void> changeTheme(BuildContext context) async {
 
-    toggleTheme();
+    _toggleTheme();
 
     final setIsLightThemeEither = await themeRepository.setIsLightTheme(state.themeStateEnum == ThemeStateEnum.light);
 
