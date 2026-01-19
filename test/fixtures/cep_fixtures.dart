@@ -24,6 +24,7 @@ const String tCepLocalResponse =
     '{"cep":"cep","logradouro":"logradouro","complemento":"complemento","bairro":"bairro","localidade":"localidade","uf":"PI"}';
 
 const tGetCepDetailsByCepBodyRight = GetCepDetailsByCepBody(cep: 'cep');
+const tGetCepDetailsByCepBodyLeft = GetCepDetailsByCepBody(cep: 'cepdeerro');
 
 const tGetCepsDetailByCepBodyRight = GetCepsDetailsByLocalDetailsBody(
   cidade: 'cidade',
