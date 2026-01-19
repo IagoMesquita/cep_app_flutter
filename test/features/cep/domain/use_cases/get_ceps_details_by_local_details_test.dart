@@ -24,7 +24,7 @@ void main() {
 
   group('should get cep details by local details', () {
     test('success', () async {
-      when(
+      when( 
         () => mockCepRepository.getCepsDetailsByLocalDetails(any()),
       ).thenAnswer((_) async => Right([tCepObject]));
 
