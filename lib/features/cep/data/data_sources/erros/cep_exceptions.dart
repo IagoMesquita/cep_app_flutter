@@ -9,5 +9,5 @@ final class CepLocalException extends CepException {
 }
 
 final class CepRemoteException extends CepException {
-  CepRemoteException({ super.message };)
+  CepRemoteException({ super.message });
 }
