@@ -6,10 +6,10 @@ import 'package:cep_app/shared/data/async/either.dart';
 
 abstract interface class CepRepository {
   Future<Either<CepException, CepResponse>> getCepDetailsByCep(
-    GetCepDetailsByCepBody body,
+    GetCepDetailsByCepBody cep,
   );
 
   Future<Either<CepException, List<CepResponse>>> getCepsDetailsByLocalDetails(
-    GetCepsDetailsByLocalDetailsBody body,
+    GetCepsDetailsByLocalDetailsBody cep,
   );
 }
