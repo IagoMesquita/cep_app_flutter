@@ -35,14 +35,7 @@ class GetCepDetailsByCepRemoteDataSourceImpl implements GetCepDetailsByCepRemote
           return Right(CepResponseModel.fromMap(r.data));
     }
 
-
   }
-
-  // @override
-  // Future<Either<CepRemoteException, void>> set(CepResponseModel cep) {
-  //   // TODO: implement set
-  //   throw UnimplementedError();
-  // }
 
 }
 
