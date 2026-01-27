@@ -23,7 +23,7 @@ class GetCepDetailsByLocalDetailsRemoteDataSourceImpl
   Future<Either<CepRemoteException, List<CepResponse>>> call(
     GetCepsDetailsByLocalDetailsBody localDetails,
   ) async {
-    final cepDetailsByLocalDetailsEither = await _apiService.get(
+    final cepDetailsByLocalDetailsEither = await _apiService.get<List>(
       '${localDetails.estado}/${localDetails.cidade}/${localDetails.rua}/josn/',
     );
 
@@ -38,7 +38,7 @@ class GetCepDetailsByLocalDetailsRemoteDataSourceImpl
         };
       case Right(value: final r):
         return Right(
-          (r.data as List)
+          r.data
               .map((cepResponse) => CepResponseModel.fromMap(cepResponse))
               .toList(),
         );
