@@ -9,7 +9,8 @@ class CepScreen extends StatelessWidget {
     return CepScreenAppBarWidget(
       title: 'Cep App - Clean Architecture',
       tabs: [
-        
+        Center(child: Text('Pesquisa'),),
+        Center(child: Text('RETORNO'),),
       ],
     );
   }
