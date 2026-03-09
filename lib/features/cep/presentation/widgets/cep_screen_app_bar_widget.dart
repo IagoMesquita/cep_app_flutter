@@ -19,17 +19,34 @@ class CepScreenAppBarWidget extends ConsumerStatefulWidget {
       _CepScreenAppBarWidgetState();
 }
 
-class _CepScreenAppBarWidgetState extends ConsumerState<CepScreenAppBarWidget> {
+class _CepScreenAppBarWidgetState extends ConsumerState<CepScreenAppBarWidget>
+    with TickerProviderStateMixin {
+  late TabController tabCtrl;
+
   @override
   void initState() {
     ref.read<ThemeNotifier>(themeNotifierProvider.notifier).initThemeState();
+    tabCtrl = TabController(length: 2, vsync: this,)
+      ..addListener(onTabIndexChange);
     super.initState();
+  } 
+
+  void onTabIndexChange() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    tabCtrl.removeListener(onTabIndexChange);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeState = ref.watch<ThemeState>(themeNotifierProvider);
-    final themeNotifier = ref.watch<ThemeNotifier>(themeNotifierProvider.notifier);
+    final themeNotifier = ref.watch<ThemeNotifier>(
+      themeNotifierProvider.notifier,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +59,15 @@ class _CepScreenAppBarWidgetState extends ConsumerState<CepScreenAppBarWidget> {
             },
           ),
         ],
+        bottom: TabBar(
+          controller: tabCtrl,
+          tabs: [
+            Tab(icon: Icon(Icons.search), text: 'CEP'),
+            Tab(icon: Icon(Icons.location_city), text: 'Detalhes do local'),
+          ],
+        ),
       ),
+      body: widget.tabs[tabCtrl.index],
     );
   }
 }
