@@ -7,9 +7,9 @@ import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpo
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_state.dart';
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
+import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
 import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SearchByCepTabWidget extends ConsumerStatefulWidget {
@@ -53,32 +53,60 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Form(
         key: formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Insira um CEP', style: context.getTextTheme.titleMedium),
-            SizedBox(height: 16),
-            CepTextFieldWidget(
-              textEC: cepTEC,
-              placeholder: 'CEP',
-              validator: (String? cep) {
-                if (cep == null || cep.isEmpty) {
-                  return ValidationMessagesConst.notEmpty('CEP');
-                }
-                return null;
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 32),
+              Text('Insira um CEP', style: context.getTextTheme.titleMedium),
+              SizedBox(height: 16),
+              CepTextFieldWidget(
+                textEC: cepTEC,
+                placeholder: 'CEP',
+                validator: (String? cep) {
+                  if (cep == null || cep.isEmpty) {
+                    return ValidationMessagesConst.notEmpty('CEP');
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 32),
+              CepButtonWidget(
+                label: 'Procurar',
+                onPressed: state.state == CepStateEnum.loading
+                    ? null
+                    : () {
+                        cepInputFN.unfocus();
+                        onSearchCep();
+                      },
+              ),
+              const SizedBox(height: 32),
+              switch (state.state) {
+                CepStateEnum.error => Text(state.errorMessage!),
+                CepStateEnum.loading => CircularProgressIndicator(),
+                CepStateEnum.loaded => Column(
+                  children: [
+                    Text('Resultado:', style: context.getTextTheme.titleLarge),
+                    const SizedBox(height: 32),
+                    Column(
+                      children: [
+                        Text(state.cep!.cep),
+                        const SizedBox(height: 8),
+                        Text(state.cep!.localidade),
+                        const SizedBox(height: 8),
+                        Text(state.cep!.bairro),
+                        const SizedBox(height: 8),
+                        Text(state.cep!.uf),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ],
+                ),
+                CepStateEnum.initial => const SizedBox.shrink(),
+                CepStateEnum.noResult => NoResultWidget(text: 'Sem resultado, tente outro CEP.')
               },
-            ),
-            const SizedBox(height: 32),
-            CepButtonWidget(
-              label: 'Procurar',
-              onPressed: state.state == CepStateEnum.loading ? null : () {
-                cepInputFN.unfocus();
-                onSearchCep();
-              },
-            ),
-            const SizedBox(height: 32),
-            
-          ],
+            ],
+          ),
         ),
       ),
     );
