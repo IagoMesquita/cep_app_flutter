@@ -1,6 +1,6 @@
 import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
-import 'package:cep_app/features/cep/presentation/cep_tec_mixin.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
+import 'package:cep_app/features/cep/presentation/mixins/cep_tec_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/cep_notifier_provider.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_notifier.dart';
