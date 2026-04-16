@@ -40,7 +40,7 @@ final class SearchByLocalDetailsNotifier
 
         state = state.copyWith(
           isLoading: false,
-          state: noInternetError ? CepStateEnum.loaded : null,
+          state: noInternetError ? CepStateEnum.loaded : CepStateEnum.error,
           errorMessage: noInternetError ? null : l.message, 
           localDetailsList: noInternetError ? l.cepList : null,
         );
