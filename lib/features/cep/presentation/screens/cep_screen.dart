@@ -1,5 +1,6 @@
 import 'package:cep_app/features/cep/presentation/widgets/app_bar/cep_screen_app_bar_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/tabs/search_by_cep_tab_widget.dart';
+import 'package:cep_app/features/cep/presentation/widgets/tabs/search_by_local_details_tab_widget.dart';
 import 'package:flutter/widgets.dart';
 
 class CepScreen extends StatelessWidget {
@@ -7,11 +8,11 @@ class CepScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CepScreenAppBarWidget(
+    return const CepScreenAppBarWidget(
       title: 'Cep App - Clean Architecture',
       tabs: [
         SearchByCepTabWidget(),
-        Center(child: Text('RETORNO'),),
+        Center(child: SearchByLocalDetailsTabWidget(),),
       ],
     );
   }
