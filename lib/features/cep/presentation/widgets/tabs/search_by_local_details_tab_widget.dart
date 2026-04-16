@@ -7,6 +7,7 @@ import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_detai
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/search_by_local_details_state.dart';
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
+import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
 import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,8 +38,12 @@ class _SearchByLocalDetailsTabWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch<SearchByLocalDetailsState>(searchByLocalDetailsNotifierProvider);
-    final notifier = ref.watch<SearchByLocalDetailsNotifier>(searchByLocalDetailsNotifierProvider.notifier);
+    final state = ref.watch<SearchByLocalDetailsState>(
+      searchByLocalDetailsNotifierProvider,
+    );
+    final notifier = ref.watch<SearchByLocalDetailsNotifier>(
+      searchByLocalDetailsNotifierProvider.notifier,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Form(
@@ -65,19 +70,19 @@ class _SearchByLocalDetailsTabWidgetState
               ),
               const SizedBox(height: 16),
               CepTextFieldWidget(
-                textEC: estadoTEC,
+                textEC: cidadeTEC,
                 focusNode: cidadeFN,
                 placeholder: 'Cidade',
                 validator: (String? cidade) {
                   if (cidade == null || cidade.isEmpty) {
                     return ValidationMessagesConst.notEmpty('Cidade');
-                  } 
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               CepTextFieldWidget(
-                textEC: estadoTEC,
+                textEC: ruaTEC,
                 focusNode: ruaFN,
                 placeholder: 'Rua',
                 validator: (String? rua) {
@@ -87,14 +92,59 @@ class _SearchByLocalDetailsTabWidgetState
                   return null;
                 },
               ),
-              const SizedBox(height: 32,),
-              CepButtonWidget(label: 'Procurara', onPressed: () {
-                if (state.state == CepStateEnum.loading) {
-                  return;
-                }
-
-                FocusScope.of(context).requestFocus(FocusNode());
-              },)
+              const SizedBox(height: 32),
+              CepButtonWidget(
+                label: 'Procurara',
+                onPressed: () {
+                  if (state.state == CepStateEnum.loading) {
+                    return;
+                  }
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  onSearchByLocalDetails(notifier);
+                },
+              ),
+              const SizedBox(height: 16),
+              switch (state.state) {
+                CepStateEnum.error => Text(state.errorMessage!),
+                CepStateEnum.loading => const CircularProgressIndicator(),
+                CepStateEnum.loaded => Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    Text('Resultados:', style: context.getTextTheme.titleLarge),
+                    const SizedBox(height: 32),
+                    Column(
+                      children:
+                          state.localDetailsList
+                              ?.map(
+                                (localDetailsItem) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(localDetailsItem.cep),
+                                      const SizedBox(height: 8),
+                                      Text(localDetailsItem.localidade),
+                                      const SizedBox(height: 8),
+                                      Text(localDetailsItem.bairro),
+                                      const SizedBox(height: 8),
+                                      Text(localDetailsItem.uf),
+                                      const SizedBox(height: 8),
+                                    ],
+                                  ),
+                                ),
+                              )
+                              .toList() ??
+                          [],
+                    ),
+                  ],
+                ),
+                CepStateEnum.initial => const SizedBox.shrink(),
+                CepStateEnum.noResult => const NoResultWidget(
+                  text: 'Sem resultados, tente outro local',
+                ),
+              },
+              const SizedBox(height: 16,)
             ],
           ),
         ),
