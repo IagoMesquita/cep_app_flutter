@@ -38,8 +38,8 @@ class GetCepDetailsByLocalDetailsRemoteDataSourceImpl
         };
       case Right(value: final r):
         return Right(
-          (r.data)
-              .map((cepResponse) => CepResponseModel.fromMap(cepResponse))
+          (r.data as List)
+              .map((cepResponse) => CepResponseModel.fromMap(cepResponse as Map<String, dynamic>))
               .toList(),
         );
     }

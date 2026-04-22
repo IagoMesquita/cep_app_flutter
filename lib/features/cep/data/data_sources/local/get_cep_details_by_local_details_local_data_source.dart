@@ -31,7 +31,7 @@ class GetCepDetailsByLocalDetailsLocalDataSourceImpl
       Right(value: final r) => Right(
         r != null
             ? (jsonDecode(r) as List)
-                  .map((cepResponse) => CepResponseModel.fromMap(cepResponse))
+                  .map((cepResponse) => CepResponseModel.fromMap(cepResponse as Map<String, dynamic>))
                   .toList()
             : null,
       ),
