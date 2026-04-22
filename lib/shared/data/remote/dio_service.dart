@@ -63,7 +63,6 @@ final class DioService implements ApiService {
                   _ => ErrorStatus.unknown,
                 },
           message:
-              dioError.message ??
               dioError.response?.data?['message'] ??
               ConstStrings.kDefaultError,
         ),
