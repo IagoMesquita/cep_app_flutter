@@ -12,6 +12,7 @@ import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const searchByZipCodeButtonKey = Key('searchByZipCodeButtonKey');
 class SearchByCepTabWidget extends ConsumerStatefulWidget {
   const SearchByCepTabWidget({super.key});
 
@@ -72,6 +73,7 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
               ),
               const SizedBox(height: 32),
               CepButtonWidget(
+                key: searchByZipCodeButtonKey,
                 label: 'Procurar',
                 onPressed: state.state == CepStateEnum.loading
                     ? null
