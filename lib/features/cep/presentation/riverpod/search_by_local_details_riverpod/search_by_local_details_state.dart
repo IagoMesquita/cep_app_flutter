@@ -1,8 +1,8 @@
-import 'package:cep_app/features/cep/domain/entities/cep_response.dart';
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
 
 final class SearchByLocalDetailsState extends BaseCepAppState {
-  final List<CepResponse>? localDetailsList;
+  final List<AddressEntity>? localDetailsList;
 
   const SearchByLocalDetailsState({
     super.isLoading = false,
@@ -26,7 +26,7 @@ final class SearchByLocalDetailsState extends BaseCepAppState {
     bool? isLoading,
     CepStateEnum? state,
     String? errorMessage,
-    List<CepResponse>? localDetailsList,
+    List<AddressEntity>? localDetailsList,
   }) => SearchByLocalDetailsState(
     isLoading: isLoading ?? this.isLoading,
     state: state ?? this.state,

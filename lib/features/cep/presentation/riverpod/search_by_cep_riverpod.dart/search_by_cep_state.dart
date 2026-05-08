@@ -1,8 +1,8 @@
-import 'package:cep_app/features/cep/domain/entities/cep_response.dart';
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
 
 final class SearchByCepState extends BaseCepAppState{
-  final CepResponse? cep;
+  final AddressEntity? cep;
 
   const SearchByCepState({
     this.cep,
@@ -23,7 +23,7 @@ final class SearchByCepState extends BaseCepAppState{
   
   @override
   SearchByCepState copyWith({
-    CepResponse? cep,
+    AddressEntity? cep,
     bool? isLoading,
     CepStateEnum? state,
     String? errorMessage,

@@ -1,15 +1,15 @@
 import 'package:cep_app/features/cep/data/data_sources/erros/cep_exceptions.dart';
 import 'package:cep_app/features/cep/data/models/cep_response_model.dart';
-import 'package:cep_app/features/cep/domain/entities/cep_response.dart';
-import 'package:cep_app/features/cep/domain/entities/get_ceps_details_by_local_details_body.dart';
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
 import 'package:cep_app/shared/data/async/either.dart';
 import 'package:cep_app/shared/data/remote/api_service.dart';
 import 'package:cep_app/shared/data/remote/errors/api_exception.dart';
 import 'package:cep_app/shared/data/remote/errors/no_internet_exception.dart';
 
 abstract interface class GetCepDetailsByLocalRemoteDataSource {
-  Future<Either<CepRemoteException, List<CepResponse>>> call(
-    GetCepsDetailsByLocalDetailsBody localDetails,
+  Future<Either<CepRemoteException, List<AddressEntity>>> call(
+    SearchByAddressParams addressParams,
   );
 }
 
@@ -20,11 +20,11 @@ class GetCepDetailsByLocalDetailsRemoteDataSourceImpl
   GetCepDetailsByLocalDetailsRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<Either<CepRemoteException, List<CepResponse>>> call(
-    GetCepsDetailsByLocalDetailsBody localDetails,
+  Future<Either<CepRemoteException, List<AddressEntity>>> call(
+    SearchByAddressParams addressParams,
   ) async {
     final cepDetailsByLocalDetailsEither = await _apiService.get<List>(
-      '/${localDetails.estado}/${localDetails.cidade}/${localDetails.rua}/json/',
+      '/${addressParams.estado}/${addressParams.cidade}/${addressParams.rua}/json/',
     );
 
     switch (cepDetailsByLocalDetailsEither) {
@@ -39,7 +39,7 @@ class GetCepDetailsByLocalDetailsRemoteDataSourceImpl
       case Right(value: final r):
         return Right(
           (r.data as List)
-              .map((cepResponse) => CepResponseModel.fromMap(cepResponse as Map<String, dynamic>))
+              .map((cepResponse) => AddressModel.fromMap(cepResponse as Map<String, dynamic>))
               .toList(),
         );
     }

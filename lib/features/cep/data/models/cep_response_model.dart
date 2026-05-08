@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:cep_app/features/cep/domain/entities/cep_response.dart';
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 
-class CepResponseModel extends CepResponse {
-  const CepResponseModel({
+class AddressModel extends AddressEntity {
+  const AddressModel({
     required super.cep,
     required super.logradouro,
     required super.complemento,
@@ -14,8 +14,8 @@ class CepResponseModel extends CepResponse {
 
   //  Converte Map → Model
   // Quando você recebe JSON da API e Dio o decodifica para Map<String, dynamic>
-  factory CepResponseModel.fromMap(Map<String, dynamic> map) {
-    return CepResponseModel(
+  factory AddressModel.fromMap(Map<String, dynamic> map) {
+    return AddressModel(
       cep: map['cep'],
       logradouro: map['logradouro'],
       complemento: map['complemento'],
@@ -27,8 +27,8 @@ class CepResponseModel extends CepResponse {
 
   // Converte String JSON → Model
   // Quando você tem JSON como string (ex: lendo de cache local)
-  factory CepResponseModel.fromJson(String json) {
-    return CepResponseModel.fromMap(jsonDecode(json));
+  factory AddressModel.fromJson(String json) {
+    return AddressModel.fromMap(jsonDecode(json));
   }
 
   // Converte Model → Map

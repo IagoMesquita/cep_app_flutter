@@ -6,9 +6,9 @@ import 'package:cep_app/shared/data/async/either.dart';
 import 'package:cep_app/shared/data/local/local_service/local_service.dart';
 
 abstract interface class GetCepDetailsByLocalDetailsLocalDataSource {
-  Future<Either<CepLocalException, List<CepResponseModel>?>> get();
+  Future<Either<CepLocalException, List<AddressModel>?>> get();
   Future<Either<CepLocalException, void>> set(
-    List<CepResponseModel> CepResponseList,
+    List<AddressModel> addressEntity,
   );
 }
 
@@ -21,7 +21,7 @@ class GetCepDetailsByLocalDetailsLocalDataSourceImpl
   GetCepDetailsByLocalDetailsLocalDataSourceImpl(this._sharedPreferences);
 
   @override
-  Future<Either<CepLocalException, List<CepResponseModel>?>> get() async {
+  Future<Either<CepLocalException, List<AddressModel>?>> get() async {
     final localCepEither = await _sharedPreferences.get<String>(
       GET_CEP_BY_LOCAL_DETAILS_LOCAL_KEY,
     );
@@ -31,7 +31,7 @@ class GetCepDetailsByLocalDetailsLocalDataSourceImpl
       Right(value: final r) => Right(
         r != null
             ? (jsonDecode(r) as List)
-                  .map((cepResponse) => CepResponseModel.fromMap(cepResponse as Map<String, dynamic>))
+                  .map((addressEntity) => AddressModel.fromMap(addressEntity as Map<String, dynamic>))
                   .toList()
             : null,
       ),
@@ -40,16 +40,16 @@ class GetCepDetailsByLocalDetailsLocalDataSourceImpl
 
   @override
   Future<Either<CepLocalException, void>> set(
-    List<CepResponseModel> CepResponseList,
+    List<AddressModel> addressEntity,
   ) async {
-    final cepResponseListLocalResult = await _sharedPreferences.set<String>(
+    final addressEntityListLocalResult = await _sharedPreferences.set<String>(
       GET_CEP_BY_LOCAL_DETAILS_LOCAL_KEY,
       jsonEncode(
-        CepResponseList.map((cepResponse) => cepResponse.toMap()).toList(),
+        addressEntity.map((addressEntity) => addressEntity.toMap()).toList(),
       ),
     );
 
-    return switch (cepResponseListLocalResult) {
+    return switch (addressEntityListLocalResult) {
       Left(value: final l) => Left(CepLocalException(message: l.message)),
       Right() => Right(null),
     };

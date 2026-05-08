@@ -1,6 +1,6 @@
 import 'package:cep_app/features/cep/data/data_sources/erros/cep_exceptions.dart';
-import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_state.dart';
 import 'package:cep_app/shared/data/async/either.dart';
@@ -17,7 +17,7 @@ final class SearchByCepNotifier extends StateNotifier<SearchByCepState> {
   bool get isLoading => state.isLoading;
 
   Future<void> loadAddressByCep(
-    GetCepDetailsByCepBody cep, BuildContext context,
+    SearchByCepParams cep, BuildContext context,
   ) async {
     state = state.copyWith(
       isLoading: true,

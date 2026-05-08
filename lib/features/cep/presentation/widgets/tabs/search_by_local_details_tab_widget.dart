@@ -1,4 +1,4 @@
-import 'package:cep_app/features/cep/domain/entities/get_ceps_details_by_local_details_body.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
 import 'package:cep_app/features/cep/presentation/mixins/search_cep_local_details_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
@@ -29,7 +29,7 @@ class _SearchByLocalDetailsTabWidgetState
 
   void onSearchByLocalDetails(SearchByLocalDetailsNotifier notifier) {
     if (formKey.currentState!.validate()) {
-      final body = GetCepsDetailsByLocalDetailsBody(
+      final body = SearchByAddressParams(
         estado: estadoTEC.text,
         cidade: cidadeTEC.text,
         rua: ruaTEC.text,

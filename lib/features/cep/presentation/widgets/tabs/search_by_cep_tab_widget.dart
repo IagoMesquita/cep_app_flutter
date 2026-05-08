@@ -1,4 +1,4 @@
-import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
 import 'package:cep_app/features/cep/presentation/mixins/cep_tec_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
@@ -40,7 +40,7 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
 
     if (formKey.currentState!.validate()) {
       notifier.loadAddressByCep(
-        GetCepDetailsByCepBody(cep: cepTEC.text),
+        SearchByCepParams(cep: cepTEC.text),
         context,
       );
     }

@@ -1,15 +1,15 @@
-import 'package:cep_app/features/cep/domain/entities/cep_response.dart';
-import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
-import 'package:cep_app/features/cep/domain/entities/get_ceps_details_by_local_details_body.dart';
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/shared/data/async/either.dart';
 
 abstract interface class CepRepository {
-  Future<Either<CepException, CepResponse>> getCepDetailsByCep(
-    GetCepDetailsByCepBody cep,
+  Future<Either<CepException, AddressEntity>> getCepDetailsByCep(
+    SearchByCepParams cep,
   );
 
-  Future<Either<CepException, List<CepResponse>>> getCepsDetailsByLocalDetails(
-    GetCepsDetailsByLocalDetailsBody cep,
+  Future<Either<CepException, List<AddressEntity>>> getCepsDetailsByLocalDetails(
+    SearchByAddressParams address,
   );
 }

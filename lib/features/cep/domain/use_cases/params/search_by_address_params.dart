@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class GetCepsDetailsByLocalDetailsBody extends Equatable {
+class SearchByAddressParams extends Equatable {
   final String estado;
   final String cidade;
   final String rua;
 
-  const GetCepsDetailsByLocalDetailsBody({
+  const SearchByAddressParams({
     required this.estado,
     required this.cidade,
     required this.rua 

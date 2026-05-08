@@ -4,11 +4,11 @@ import 'package:cep_app/features/cep/data/data_sources/local/get_cep_details_by_
 import 'package:cep_app/features/cep/data/data_sources/remote/get_cep_details_by_cep_remote_data_source.dart';
 import 'package:cep_app/features/cep/data/data_sources/remote/get_cep_details_by_local_details_remote_data_source.dart';
 import 'package:cep_app/features/cep/data/models/cep_response_model.dart';
-import 'package:cep_app/features/cep/domain/entities/cep_response.dart';
-import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
-import 'package:cep_app/features/cep/domain/entities/get_ceps_details_by_local_details_body.dart';
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
 import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/shared/const/const_strings.dart';
 import 'package:cep_app/shared/data/async/either.dart';
 import 'package:cep_app/shared/data/remote/errors/no_internet_exception.dart';
@@ -29,8 +29,8 @@ class CepRepositoryImpl implements CepRepository {
   );
 
   @override
-  Future<Either<CepException, CepResponse>> getCepDetailsByCep(
-    GetCepDetailsByCepBody cep,
+  Future<Either<CepException, AddressEntity>> getCepDetailsByCep(
+    SearchByCepParams cep,
   ) async {
     try {
       final cepEitherResponse = await _getCepByRemote(cep);
@@ -55,24 +55,24 @@ class CepRepositoryImpl implements CepRepository {
   }
 
   @override
-  Future<Either<CepException, List<CepResponse>>> getCepsDetailsByLocalDetails(
-    GetCepsDetailsByLocalDetailsBody locaqlDetail,
+  Future<Either<CepException, List<AddressEntity>>> getCepsDetailsByLocalDetails(
+    SearchByAddressParams addressParams,
   ) async {
     try {
       final cepResponseByLocalDetailsEither =
-          await _getCepDetailsByLocalRemoteDataSource(locaqlDetail);
+          await _getCepDetailsByLocalRemoteDataSource(addressParams);
 
       switch(cepResponseByLocalDetailsEither) {
         case Left(value: final l):
           return Left(l);
         case Right(value: final r):
-          await _getCepDetailsByLocalDetailsLocalDataSource.set(r as List<CepResponseModel>);
+          await _getCepDetailsByLocalDetailsLocalDataSource.set(r as List<AddressModel>);
           return Right(r);  
       }    
     } on NoInternetException {
-      final localListOfCepResponse = await _getCepDetailsByLocalDetailsLocalDataSource.get();
+      final localListOfAddressEntity = await _getCepDetailsByLocalDetailsLocalDataSource.get();
 
-      return switch(localListOfCepResponse) {
+      return switch(localListOfAddressEntity) {
         Left(value: final l) => Left(CepLocalException(message: l.message)),
         Right(value: final r) => Left(LocalDetailsInternetConnectionException(cepList: r))
       };

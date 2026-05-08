@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class CepResponse extends Equatable {
+class AddressEntity extends Equatable {
   final String cep;
   final String logradouro;
   final String complemento;
@@ -8,7 +8,7 @@ class CepResponse extends Equatable {
   final String localidade;
   final String uf;
 
-  const CepResponse(
+  const AddressEntity(
   {
     required this.cep,
     required this.logradouro,
