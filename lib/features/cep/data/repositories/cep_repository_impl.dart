@@ -3,7 +3,7 @@ import 'package:cep_app/features/cep/data/data_sources/local/get_cep_details_by_
 import 'package:cep_app/features/cep/data/data_sources/local/get_cep_details_by_local_details_local_data_source.dart';
 import 'package:cep_app/features/cep/data/data_sources/remote/get_cep_details_by_cep_remote_data_source.dart';
 import 'package:cep_app/features/cep/data/data_sources/remote/get_cep_details_by_local_details_remote_data_source.dart';
-import 'package:cep_app/features/cep/data/models/cep_response_model.dart';
+import 'package:cep_app/features/cep/data/models/address_model.dart';
 import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
 import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';

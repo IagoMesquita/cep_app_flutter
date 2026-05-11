@@ -1,5 +1,5 @@
 import 'package:cep_app/features/cep/data/data_sources/erros/cep_exceptions.dart';
-import 'package:cep_app/features/cep/data/models/cep_response_model.dart';
+import 'package:cep_app/features/cep/data/models/address_model.dart';
 import 'package:cep_app/shared/data/async/either.dart';
 import 'package:cep_app/shared/data/local/local_service/local_service.dart';
 
