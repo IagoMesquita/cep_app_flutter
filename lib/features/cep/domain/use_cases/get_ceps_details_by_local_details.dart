@@ -9,8 +9,20 @@ class GetCepsDetailsByLocalDetails {
 
   GetCepsDetailsByLocalDetails(this._cepRepository);
 
-  Future<Either<CepException, List<AddressEntity>>> call(SearchByAddressParams param) async {
-    return _cepRepository.getCepsDetailsByLocalDetails(param);
+  Future<Either<AddressFailure, List<AddressEntity>>> call(SearchByAddressParams param) async {
+    // Valida se o estado tem exatamente 2 caracteres
+    if (param.estado.length != 2) {
+      return Left(InvalidAddressParamsFailure());
+    }
+    
+    // Transforma o estado para maiúsculas
+    final normalizedParam = SearchByAddressParams(
+      estado: param.estado.toUpperCase(),
+      cidade: param.cidade,
+      rua: param.rua,
+    );
+    
+    return _cepRepository.getCepsDetailsByLocalDetails(normalizedParam);
   }
   
 }
