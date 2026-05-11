@@ -29,7 +29,7 @@ class CepRepositoryImpl implements CepRepository {
   );
 
   @override
-  Future<Either<CepException, AddressEntity>> getCepDetailsByCep(
+  Future<Either<AddressFailure, AddressEntity>> getCepDetailsByCep(
     SearchByCepParams cep,
   ) async {
     try {
@@ -50,12 +50,12 @@ class CepRepositoryImpl implements CepRepository {
         Right(value: final r) => Left(CepInterConnectionException(cep: r)),
       };
     } catch (e) {
-      return Left(CepException(message: ConstStrings.kDefaultError));
+      return Left(AddressFailure(message: ConstStrings.kDefaultError));
     }
   }
 
   @override
-  Future<Either<CepException, List<AddressEntity>>> getCepsDetailsByLocalDetails(
+  Future<Either<AddressFailure, List<AddressEntity>>> getCepsDetailsByLocalDetails(
     SearchByAddressParams addressParams,
   ) async {
     try {
@@ -78,7 +78,7 @@ class CepRepositoryImpl implements CepRepository {
       };
       
     } catch (e) {
-      return Left(CepException(message: ConstStrings.kDefaultError));
+      return Left(AddressFailure(message: ConstStrings.kDefaultError));
     }
   }
 }

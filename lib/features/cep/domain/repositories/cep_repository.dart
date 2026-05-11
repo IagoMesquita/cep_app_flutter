@@ -5,11 +5,11 @@ import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_param
 import 'package:cep_app/shared/data/async/either.dart';
 
 abstract interface class CepRepository {
-  Future<Either<CepException, AddressEntity>> getCepDetailsByCep(
+  Future<Either<AddressFailure, AddressEntity>> getCepDetailsByCep(
     SearchByCepParams cep,
   );
 
-  Future<Either<CepException, List<AddressEntity>>> getCepsDetailsByLocalDetails(
+  Future<Either<AddressFailure, List<AddressEntity>>> getCepsDetailsByLocalDetails(
     SearchByAddressParams address,
   );
 }

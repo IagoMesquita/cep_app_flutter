@@ -10,11 +10,11 @@ class GetCepDetailsByCep {
 
   GetCepDetailsByCep(this._repository);
 
-  Future<Either<CepException, AddressEntity>> call(SearchByCepParams param) async {
+  Future<Either<AddressFailure, AddressEntity>> call(SearchByCepParams param) async {
     // Validação: CEP deve ter exatamente 8 caracteres numéricos
     final cepPattern = RegExp(r'^\d{8}$');
     if (!cepPattern.hasMatch(param.cep)) {
-      return Left(InvalidCepException());
+      return Left(InvalidCepFailure());
     }
 
     return _repository.getCepDetailsByCep(param);
