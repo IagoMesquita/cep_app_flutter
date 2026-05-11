@@ -1,8 +1,8 @@
-import 'package:cep_app/features/cep/data/models/cep_response_model.dart';
-import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
-import 'package:cep_app/features/cep/domain/entities/get_ceps_details_by_local_details_body.dart';
+import 'package:cep_app/features/cep/data/models/address_model.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 
-const tCepObject = CepResponseModel(
+const tCepObject = AddressModel(
   cep: 'cep',
   logradouro: 'logradouro',
   complemento: 'complemento',
@@ -23,10 +23,10 @@ const Map<String, dynamic> tCepApiReponse = {
 const String tCepLocalResponse =
     '{"cep":"cep","logradouro":"logradouro","complemento":"complemento","bairro":"bairro","localidade":"localidade","uf":"PI"}';
 
-const tGetCepDetailsByCepBodyRight = GetCepDetailsByCepBody(cep: 'cep');
-const tGetCepDetailsByCepBodyLeft = GetCepDetailsByCepBody(cep: 'cepdeerro');
+const tSearchByCepParamsRight =SearchByCepParams(cep: 'cep');
+const tSearchSearchByCepParamsLeft =SearchByCepParams(cep: 'cepdeerro');
 
-const tGetCepsDetailByCepBodyRight = GetCepsDetailsByLocalDetailsBody(
+const tSearchByAddressParamsRight = SearchByAddressParams(
   cidade: 'cidade',
   estado: 'estado',
   rua: 'rua',
