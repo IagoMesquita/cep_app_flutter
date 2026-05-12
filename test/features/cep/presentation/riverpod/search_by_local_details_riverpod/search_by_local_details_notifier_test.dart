@@ -29,7 +29,7 @@ void main() {
     );
     mockBuildContext = MockBuildContext();
 
-    registerFallbackValue(tGetCepsDetailByCepBodyRight);
+    registerFallbackValue(tSearchByAddressParamsRight);
   });
 
   stateNotifierTest(
@@ -51,7 +51,7 @@ void main() {
       },
       actions: (_) {
         searchByLocalDetailsNotifier.loadAddressByLocalDetails(
-          tGetCepsDetailByCepBodyRight,
+          tSearchByAddressParamsRight,
           mockBuildContext,
         );
       },
@@ -76,13 +76,13 @@ void main() {
       setUp: () {
         when(
           () => mockGetCepDetailsByLocalDetails(any()),
-        ).thenAnswer((_) async => Left(CepException()));
+        ).thenAnswer((_) async => Left(AddressFailure()));
 
         when(() => mockBuildContext.mounted).thenReturn(true);
       },
       actions: (_) async {
         searchByLocalDetailsNotifier.loadAddressByLocalDetails(
-          tGetCepsDetailByCepBodyRight,
+          tSearchByAddressParamsRight,
           mockBuildContext,
         );
       },

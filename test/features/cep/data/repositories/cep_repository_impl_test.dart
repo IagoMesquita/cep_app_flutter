@@ -55,7 +55,7 @@ void main() {
       mockGetCepDetailsByLocalDetailsLocalDataSource
     );
 
-    registerFallbackValue(tGetCepDetailsByCepBodyRight);
+    registerFallbackValue(tSearchByCepParamsRight);
     registerFallbackValue(tCepObject);
   });
 
@@ -70,7 +70,7 @@ void main() {
       ).thenAnswer((_) async => Right(null));
 
       final cepEitherResponse = await cepRepository.getCepDetailsByCep(
-        tGetCepDetailsByCepBodyRight,
+        tSearchByCepParamsRight,
       );
 
       expect(cepEitherResponse, isA<Right>());
@@ -89,7 +89,7 @@ void main() {
       ).thenAnswer((_) async => Right(tCepObject));
 
       final cepEitherResponse = await cepRepository.getCepDetailsByCep(
-        tGetCepDetailsByCepBodyRight,
+        tSearchByCepParamsRight,
       );
 
       expect(cepEitherResponse, isA<Left>());
@@ -110,7 +110,7 @@ void main() {
       );
 
       final cepEitherResponse = await cepRepository.getCepDetailsByCep(
-        tGetCepDetailsByCepBodyLeft,
+        tSearchSearchByCepParamsLeft,
       );
 
       expect(cepEitherResponse, isA<Left>());

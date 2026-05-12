@@ -1,6 +1,7 @@
 import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
 import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/shared/const/const_strings.dart';
 import 'package:cep_app/shared/data/async/either.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,31 +18,96 @@ void main() {
     mockCepRepository = MockCepRepository();
     getCepDetailsByCep = GetCepDetailsByCep(mockCepRepository);
 
-    registerFallbackValue(tGetCepDetailsByCepBodyRight);
+    registerFallbackValue(tSearchByCepParamsRight);
   });
 
-  group('should get cep details by cep', () {
-    test('success', () async {
+  group('Validação de CEP', () {
+    test('Deve retornar InvalidCepFailure quando o CEP tiver menos de 8 caracteres', () async {
+      const invalidParam = SearchByCepParams(cep: '1234567');
+
+      final result = await getCepDetailsByCep(invalidParam);
+
+      expect(result, isA<Left>());
+      expect((result as Left).value, isA<InvalidCepFailure>());
+    });
+
+    test('Deve retornar InvalidCepFailure quando o CEP tiver mais de 8 caracteres', () async {
+      const invalidParam = SearchByCepParams(cep: '123456789');
+
+      final result = await getCepDetailsByCep(invalidParam);
+
+      expect(result, isA<Left>());
+      expect((result as Left).value, isA<InvalidCepFailure>());
+    });
+
+    test('Deve retornar InvalidCepFailure quando o CEP contiver caracteres não numéricos', () async {
+      const invalidParam = SearchByCepParams(cep: '1234567a');
+
+      final result = await getCepDetailsByCep(invalidParam);
+
+      expect(result, isA<Left>());
+      expect((result as Left).value, isA<InvalidCepFailure>());
+    });
+
+    test('Deve retornar InvalidCepFailure quando o CEP contiver hífens', () async {
+      const invalidParam = SearchByCepParams(cep: '12345-678');
+
+      final result = await getCepDetailsByCep(invalidParam);
+
+      expect(result, isA<Left>());
+      expect((result as Left).value, isA<InvalidCepFailure>());
+    });
+
+    test('Deve retornar InvalidCepFailure quando o CEP estiver vazio', () async {
+      const invalidParam = SearchByCepParams(cep: '');
+
+      final result = await getCepDetailsByCep(invalidParam);
+
+      expect(result, isA<Left>());
+      expect((result as Left).value, isA<InvalidCepFailure>());
+    });
+  });
+
+  group('Cenários de sucesso e falha do repository', () {
+    test('Deve retornar CepResponse quando o CEP for válido e repository retornar sucesso', () async {
+      const validParam = SearchByCepParams(cep: '12345678');
+      
       when(() => mockCepRepository.getCepDetailsByCep(any())).thenAnswer(
         (_) async => Right(tCepObject),
       );
 
-      final cepResponse = await getCepDetailsByCep(tGetCepDetailsByCepBodyRight);
+      final result = await getCepDetailsByCep(validParam);
 
-      expect(cepResponse, isA<Right>());
+      expect(result, isA<Right>());
+      expect((result as Right).value, equals(tCepObject));
+      verify(() => mockCepRepository.getCepDetailsByCep(validParam)).called(1);
     });
 
-    test('fail', () async {
-      when(() =>  mockCepRepository.getCepDetailsByCep(any())).thenAnswer(
+    test('Deve retornar AddressFailure quando o repository falhar', () async {
+      const validParam = SearchByCepParams(cep: '87654321');
+      
+      when(() => mockCepRepository.getCepDetailsByCep(any())).thenAnswer(
         (_) async => Left(
-          CepException(message: ConstStrings.kDefaultError),
-        ) 
+          AddressFailure(message: ConstStrings.kDefaultError),
+        ),
       );
 
-      final cepResponseEither = await getCepDetailsByCep(tGetCepDetailsByCepBodyRight);
+      final result = await getCepDetailsByCep(validParam);
 
-      expect(cepResponseEither, isA<Left>());
-      expect(((cepResponseEither as Left).value as CepException).message, ConstStrings.kDefaultError);
+      expect(result, isA<Left>());
+      expect(
+        ((result as Left).value as AddressFailure).message,
+        ConstStrings.kDefaultError,
+      );
+      verify(() => mockCepRepository.getCepDetailsByCep(validParam)).called(1);
+    });
+
+    test('Não deve chamar o repository quando o CEP for inválido', () async {
+      const invalidParam = SearchByCepParams(cep: 'invalid');
+
+      await getCepDetailsByCep(invalidParam);
+
+      verifyNever(() => mockCepRepository.getCepDetailsByCep(any()));
     });
   });
 }

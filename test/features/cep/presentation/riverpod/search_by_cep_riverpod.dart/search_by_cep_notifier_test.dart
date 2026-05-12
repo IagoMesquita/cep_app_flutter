@@ -1,6 +1,6 @@
-import 'package:cep_app/features/cep/domain/entities/get_cep_details_by_cep_body.dart';
 import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
+import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_notifier.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_state.dart';
@@ -17,7 +17,7 @@ class MockGetCepDetailsByCep extends Mock implements GetCepDetailsByCep {}
 
 class MockBuildContext extends Mock implements BuildContext {}
 
-const cepBody = GetCepDetailsByCepBody(cep: '00000000');
+const cepParam = SearchByCepParams(cep: '00000000');
 
 void main() {
   late GetCepDetailsByCep getCepDetailsByCepMock;
@@ -29,7 +29,7 @@ void main() {
     cepNotifier = SearchByCepNotifier(getCepDetailsByCepMock);
     buildContextMock = MockBuildContext();
 
-    registerFallbackValue(cepBody);
+    registerFallbackValue(cepParam);
   });
 
   stateNotifierTest<SearchByCepNotifier, SearchByCepState>(
@@ -41,7 +41,7 @@ void main() {
       ).thenAnswer((_) async => Right(tCepObject));
     },
     actions: (_) async {
-      await cepNotifier.loadAddressByCep(cepBody, buildContextMock);
+      await cepNotifier.loadAddressByCep(cepParam, buildContextMock);
     },
 
     expect: () => [
@@ -60,11 +60,11 @@ void main() {
     setUp: () {
       when(
         () => getCepDetailsByCepMock(any()),
-      ).thenAnswer((_) async => Left(CepException()));
+      ).thenAnswer((_) async => Left(AddressFailure()));
       when(() => buildContextMock.mounted).thenReturn(true);
     },
     actions: (_) async {
-      await cepNotifier.loadAddressByCep(cepBody, buildContextMock);
+      await cepNotifier.loadAddressByCep(cepParam, buildContextMock);
     },
     expect: () => const [
       SearchByCepState(isLoading: true, state: CepStateEnum.loading),

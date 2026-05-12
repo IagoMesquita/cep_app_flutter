@@ -19,7 +19,7 @@ void main() {
       mockCepRepository,
     );
 
-    registerFallbackValue(tGetCepsDetailByCepBodyRight);
+    registerFallbackValue(tSearchByAddressParamsRight);
   });
 
   group('should get cep details by local details', () {
@@ -29,7 +29,7 @@ void main() {
       ).thenAnswer((_) async => Right([tCepObject]));
 
       final listOfCepResponse = await getCepsDetailsByLocalDetails(
-        tGetCepsDetailByCepBodyRight,
+        tSearchByAddressParamsRight,
       );
 
       expect(listOfCepResponse, isA<Right>());
@@ -39,16 +39,16 @@ void main() {
       when(
         () => mockCepRepository.getCepsDetailsByLocalDetails(any()),
       ).thenAnswer(
-        (_) async => Left(CepException(message: ConstStrings.kDefaultError)),
+        (_) async => Left(AddressFailure(message: ConstStrings.kDefaultError)),
       );
 
       final listOfCepResponse = await getCepsDetailsByLocalDetails(
-        tGetCepsDetailByCepBodyRight,
+        tSearchByAddressParamsRight,
       );
 
       expect(listOfCepResponse, isA<Left>());
       expect(
-        (((listOfCepResponse as Left).value) as CepException).message,
+        (((listOfCepResponse as Left).value) as AddressFailure).message,
         ConstStrings.kDefaultError,
       );
     });

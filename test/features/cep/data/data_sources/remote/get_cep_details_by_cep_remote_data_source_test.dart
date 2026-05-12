@@ -32,7 +32,7 @@ void main() {
       );
 
       final remoteCepResponse = await getCepDetailsByCepRemoteDataSource(
-        tGetCepDetailsByCepBodyRight,
+        tSearchByCepParamsRight,
       );
 
       expect(remoteCepResponse, isA<Right>());
@@ -52,7 +52,7 @@ void main() {
       );
 
       final remoteCepResponse = await getCepDetailsByCepRemoteDataSource(
-        tGetCepDetailsByCepBodyLeft,
+        tSearchSearchByCepParamsLeft,
       );
 
       expect(remoteCepResponse, isA<Left>());
