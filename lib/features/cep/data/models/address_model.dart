@@ -18,7 +18,7 @@ class AddressModel extends AddressEntity {
     // Extrai o CEP e remove caracteres especiais (hifens)
     final rawCep = map['cep'] as String?;
     final cleanCep = rawCep?.replaceAll('-', '') ?? '';
-    
+
     return AddressModel(
       cep: cleanCep,
       logradouro: map['logradouro'] as String? ?? '',
@@ -44,7 +44,7 @@ class AddressModel extends AddressEntity {
       'complemento': complemento,
       'bairro': bairro,
       'localidade': localidade,
-      'uf': uf
+      'uf': uf,
     };
   }
 
@@ -62,3 +62,39 @@ class AddressModel extends AddressEntity {
 // Permite lógica no construtor
 // Pode fazer transformações, validações
 // Pode retornar diferentes tipos (no futuro, por ex)
+
+// Essa é a confusão mais comum para quem está começando com Clean Arch no Flutter, 
+// mas a lógica é bem simples quando você separa por "territórios"
+//.Vamos colocar os pingos nos is:1. 
+//Quem "trabalha" é a Entidade (AddressEntity)
+//A Entidade é o coração do seu domínio.
+//Onde ela vive? Na camada de Domain.
+//O que ela faz? 
+//Ela é usada pelos seus UseCases e pela sua UI (Widgets).
+//A regra de ouro: A Entidade não sabe o que é um JSON, 
+//não sabe o que é uma API e não sabe o que é um banco de dados. 
+//Ela é apenas Dart "puro".2. O Model é o "Tradutor" (AddressModel)
+//O Model é uma classe da camada de Data.
+//Ele estende a Entidade apenas para que você possa passá-lo para o resto do app
+// fingindo que ele é uma Entidade.
+//A função dele é conversa fiada com o mundo externo.3. 
+//Quando usar Map vs. JSON?Sua intuição está no caminho certo, mas no ecossistema Dart/Flutter, 
+//o uso é um pouco mais específico:O Map<String, dynamic> (O formato intermediário)No Dart, 
+//quase nenhuma biblioteca trabalha com a String JSON diretamente. Elas trabalham com Maps.
+//APIs (Dio / Http): Quando você recebe uma resposta da API, o Dio já faz o jsonDecode para você e 
+//te entrega um Map.Por isso você usa o fromMap.
+//Banco de Dados Local (SQFlite): Se você salvar o endereço num banco SQL local, o driver do banco 
+//exige que você passe um Map.Resumo: O Map é o padrão para falar com pacotes/bibliotecas.
+//O JSON / String (O formato de transporte/armazenamento)A String (o JSON bruto) é usada quando 
+//você não tem uma estrutura de dados complexa ao redor:Cache Simples (SharedPreferences): 
+//O SharedPreferences só salva tipos básicos (String, int, bool). Para salvar um objeto lá, 
+//você o transforma em String via toJSON().Logs: Para printar o objeto no console de forma legível.
+//Devolução para Externos: Se você estivesse criando uma API em Dart (com Shelf ou Dart Frog), 
+//você enviaria a String JSON no corpo da resposta.Comparando com seu mundo (NestJS / Spring)
+//Para você nunca mais esquecer:
+//CamadaFlutter (Clean Arch)NestJS / SpringDomainAddressEntityEntity (TypeORM/JPA) 
+//ou Domain ObjectDataAddressModelDTO (Data Transfer Object)MecanismofromMap / toMapclass-transformer / Jackson
+//O fluxo seria esse:API manda um JSON (String).Dio recebe e transforma em Map.
+//Repository chama AddressModel.fromMap(map).
+//O Repository entrega o objeto como AddressEntity para o UseCase.
+//O UseCase faz a lógica de negócio e entrega para a UI.
