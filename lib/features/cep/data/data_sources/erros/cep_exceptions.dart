@@ -1,6 +1,6 @@
 import 'package:cep_app/features/cep/data/models/address_model.dart';
 import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
-import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
+import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/shared/const/const_strings.dart';
 
 final class CepLocalException extends AddressFailure {

@@ -1,4 +1,4 @@
-import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
+import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_ceps_details_by_local_details.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/search_by_local_details_notifier.dart';

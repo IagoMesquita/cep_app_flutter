@@ -1,6 +1,6 @@
-import 'package:cep_app/shared/erros/base_exceptions.dart';
+import 'package:cep_app/shared/errors/base_failure.dart';
 
-base class AddressFailure extends BaseExceptions {
+base class AddressFailure extends BaseFailure {
   AddressFailure({ super.message });
 }
 

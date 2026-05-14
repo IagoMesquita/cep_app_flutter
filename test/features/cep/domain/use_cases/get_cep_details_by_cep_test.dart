@@ -1,4 +1,4 @@
-import 'package:cep_app/features/cep/domain/errors/cep_exception.dart';
+import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';

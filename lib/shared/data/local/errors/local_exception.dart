@@ -1,5 +1,5 @@
-import 'package:cep_app/shared/erros/base_exceptions.dart';
+import 'package:cep_app/shared/errors/base_failure.dart';
 
-final class LocalException extends BaseExceptions {
+final class LocalException extends BaseFailure {
   const LocalException({super.message});
 } 

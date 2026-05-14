@@ -1,6 +1,6 @@
-import 'package:cep_app/shared/erros/base_exceptions.dart';
+import 'package:cep_app/shared/errors/base_failure.dart';
 
-final class ThemeLocalException extends BaseExceptions {
+final class ThemeLocalException extends BaseFailure {
   ThemeLocalException({ super.message });
 }
 
