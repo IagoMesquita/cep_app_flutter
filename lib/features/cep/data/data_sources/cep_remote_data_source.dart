@@ -11,7 +11,7 @@ abstract interface class CepRemoteDataSource {
   /// 
   /// [cepParam] - Parâmetros contendo o CEP a ser consultado
   /// Retorna [Either] com [CepRemoteException] ou [AddressModel]
-  Future<Either<CepRemoteException, AddressModel>> getAddressDetailsByCep(
+  Future<Either<CepRemoteException, AddressModel>> getAddressByCep(
     SearchByCepParams cepParam,
   );
 
@@ -19,7 +19,7 @@ abstract interface class CepRemoteDataSource {
   /// 
   /// [addressParams] - Parâmetros contendo estado, cidade e rua
   /// Retorna [Either] com [CepRemoteException] ou lista de [AddressEntity]
-  Future<Either<CepRemoteException, List<AddressModel>>> getAddressDetailsByAddress(
+  Future<Either<CepRemoteException, List<AddressModel>>> getAddressesListByAddress(
     SearchByAddressParams addressParams,
   );
 }

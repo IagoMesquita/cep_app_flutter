@@ -25,13 +25,13 @@ abstract interface class CepLocalDataSource {
   /// Recupera lista de endereços do cache local
   /// 
   /// Retorna [Either] com [CepLocalException] ou lista de [AddressModel] (pode ser null)
-  Future<Either<CepLocalException, List<AddressModel>?>> getAddressListFromCache();
+  Future<Either<CepLocalException, List<AddressModel>?>> getAddressesListFromCache();
 
   /// Armazena lista de endereços no cache local
   /// 
   /// [addressList] - Lista de modelos de endereço a serem armazenados
   /// Retorna [Either] com [CepLocalException] ou [void]
-  Future<Either<CepLocalException, void>> saveAddressListToCache(
+  Future<Either<CepLocalException, void>> saveAddressesListToCache(
     List<AddressModel> addressList,
   );
 }
