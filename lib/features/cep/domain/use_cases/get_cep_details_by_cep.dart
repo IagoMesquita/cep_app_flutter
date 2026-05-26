@@ -17,6 +17,6 @@ class GetCepDetailsByCep {
       return Left(InvalidCepFailure());
     }
 
-    return _repository.getCepDetailsByCep(param);
+    return _repository.getAddressByCep(param);
   }
 }

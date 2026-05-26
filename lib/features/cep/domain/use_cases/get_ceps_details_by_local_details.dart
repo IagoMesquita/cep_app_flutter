@@ -22,7 +22,7 @@ class GetCepsDetailsByLocalDetails {
       rua: param.rua,
     );
     
-    return _cepRepository.getCepsDetailsByLocalDetails(normalizedParam);
+    return _cepRepository.getAddressesListByAdress(normalizedParam);
   }
   
 }
