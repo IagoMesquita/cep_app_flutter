@@ -1,9 +1,6 @@
+import 'package:cep_app/features/cep/data/data_sources/cep_local_data_source.dart';
+import 'package:cep_app/features/cep/data/data_sources/cep_remote_data_source.dart';
 import 'package:cep_app/features/cep/data/data_sources/erros/cep_exceptions.dart';
-import 'package:cep_app/features/cep/data/data_sources/local/get_cep_details_by_cep_local_data_source.dart';
-import 'package:cep_app/features/cep/data/data_sources/local/get_cep_details_by_local_details_local_data_source.dart';
-import 'package:cep_app/features/cep/data/data_sources/remote/get_cep_details_by_cep_remote_data_source.dart';
-import 'package:cep_app/features/cep/data/data_sources/remote/get_cep_details_by_local_details_remote_data_source.dart';
-import 'package:cep_app/features/cep/data/models/address_model.dart';
 import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';
@@ -13,71 +10,81 @@ import 'package:cep_app/shared/const/const_strings.dart';
 import 'package:cep_app/shared/data/async/either.dart';
 import 'package:cep_app/shared/data/remote/errors/no_internet_exception.dart';
 
+// Reafatoracao:
+/// Implementação do repositório de CEP seguindo Clean Architecture
+///
+/// Depende apenas de abstrações (interfaces) para acesso remoto e local,
+/// facilitando testes e manutenção através da Inversão de Dependências
 class CepRepositoryImpl implements CepRepository {
-  final GetCepDetailsByCepRemoteDataSource _getCepByRemote;
-  final GetCepDetailsByCepLocalDataSource _getCepByLocal;
-  final GetCepDetailsByLocalRemoteDataSource
-  _getCepDetailsByLocalRemoteDataSource;
-  final GetCepDetailsByLocalDetailsLocalDataSource
-  _getCepDetailsByLocalDetailsLocalDataSource;
+  final CepRemoteDataSource _remoteDataSource;
+  final CepLocalDataSource _localDataSource;
 
-  CepRepositoryImpl(
-    this._getCepByRemote,
-    this._getCepByLocal,
-    this._getCepDetailsByLocalRemoteDataSource,
-    this._getCepDetailsByLocalDetailsLocalDataSource,
-  );
+  /// Construtor com injeção de dependências
+  ///
+  /// [_remoteDataSource] - Fonte de dados remota (API)
+  /// [_localDataSource] - Fonte de dados local (Cache)
+  CepRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<Either<AddressFailure, AddressEntity>> getCepDetailsByCep(
+  Future<Either<AddressFailure, AddressEntity>> getAddressByCep(
     SearchByCepParams cep,
   ) async {
     try {
-      final cepEitherResponse = await _getCepByRemote(cep);
+      // Tenta buscar dados remotos
+      final cepEitherResponse = await _remoteDataSource.getAddressByCep(
+        cep,
+      );
 
       switch (cepEitherResponse) {
         case Left(value: final l):
           return Left(l);
         case Right(value: final r):
-          await _getCepByLocal.set(r);
+          // Sucesso: salva no cache e retorna
+          await _localDataSource.saveAddressToCache(r);
           return Right(r);
       }
     } on NoInternetException {
-      final localCep = await _getCepByLocal.get();
+      // Sem internet: busca no cache local
+      final localCep = await _localDataSource.getAddressFromCache();
 
       return switch (localCep) {
         Left(value: final l) => Left(CepLocalException(message: l.message)),
         Right(value: final r) => Left(CepInterConnectionException(cep: r)),
       };
     } catch (e) {
+      // Erro inesperado
       return Left(AddressFailure(message: ConstStrings.kDefaultError));
     }
   }
 
   @override
-  Future<Either<AddressFailure, List<AddressEntity>>> getCepsDetailsByLocalDetails(
-    SearchByAddressParams addressParams,
-  ) async {
+  Future<Either<AddressFailure, List<AddressEntity>>>
+  getAddressesListByAdress(SearchByAddressParams addressParams) async {
     try {
-      final cepResponseByLocalDetailsEither =
-          await _getCepDetailsByLocalRemoteDataSource(addressParams);
+      final cepResponseByLocalDetailsEither = await _remoteDataSource
+          .getAddressesListByAddress(addressParams);
 
-      switch(cepResponseByLocalDetailsEither) {
+      switch (cepResponseByLocalDetailsEither) {
         case Left(value: final l):
           return Left(l);
         case Right(value: final r):
-          await _getCepDetailsByLocalDetailsLocalDataSource.set(r as List<AddressModel>);
-          return Right(r);  
-      }    
+          // Sucesso: salva no cache e retorna
+          await _localDataSource.saveAddressesListToCache(r);
+          return Right(r);
+      }
     } on NoInternetException {
-      final localListOfAddressEntity = await _getCepDetailsByLocalDetailsLocalDataSource.get();
+          // Sem internet: busca no cache local
+      final localListOfAddressEntity =
+          await _localDataSource.getAddressesListFromCache();
 
-      return switch(localListOfAddressEntity) {
+      return switch (localListOfAddressEntity) {
         Left(value: final l) => Left(CepLocalException(message: l.message)),
-        Right(value: final r) => Left(LocalDetailsInternetConnectionException(cepList: r))
+        Right(value: final r) => Left(
+          LocalDetailsInternetConnectionException(cepList: r),
+        ),
       };
-      
     } catch (e) {
+      // Erro inesperado
       return Left(AddressFailure(message: ConstStrings.kDefaultError));
     }
   }
