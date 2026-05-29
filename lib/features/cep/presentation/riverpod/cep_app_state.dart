@@ -26,22 +26,22 @@ final class CepStateLoading extends CepAppState {
 
 /// Estado de Erro Crítico: Falha na operação onde não há dados de fallback.
 final class CepStateError extends CepAppState {
-  final String _message;
+  final String message;
 
-  const CepStateError(this._message);
+  const CepStateError(this.message);
 
   @override
-  List<Object?> get props => [_message];
+  List<Object?> get props => [message];
 }
 
 /// Estado Sem Resultados: A busca foi concluída com sucesso na rede, mas a API retornou vazio.
 final class CepStateNoResult extends CepAppState {
-  final String _message;
+  final String message;
 
-  const CepStateNoResult(this._message);
+  const CepStateNoResult(this.message);
 
   @override
-  List<Object?> get props => [_message];
+  List<Object?> get props => [message];
 }
 
 // ============================================================================
@@ -49,10 +49,10 @@ final class CepStateNoResult extends CepAppState {
 // ============================================================================
 
 /// Sucesso na busca por CEP que retorna um endereco. Entretém o objeto AddressEntity puro e não-nulo.
-final class SearchByCepSucessState extends CepAppState {
+final class SearchByCepSuccessState extends CepAppState {
   final AddressEntity address;
 
-  const SearchByCepSucessState(this.address);
+  const SearchByCepSuccessState(this.address);
 
   @override
   List<Object?> get props => [address];
@@ -60,14 +60,14 @@ final class SearchByCepSucessState extends CepAppState {
 
 /// Fallback offline para busca de CEP: O fluxo falhou por falta de rede,
 /// mas entrega com segurança o último registro persistido em cache.
-final class SearchByCepOfflineSucessState extends CepAppState {
-  final AddressEntity _lastAddress;
-  final String _warningMessage;
+final class SearchByCepOfflineSuccessState extends CepAppState {
+  final AddressEntity lastAddress;
+  final String warningMessage;
 
-  const SearchByCepOfflineSucessState(this._lastAddress, this._warningMessage);
+  const SearchByCepOfflineSuccessState(this.lastAddress, this.warningMessage);
 
   @override
-  List<Object?> get props => [_lastAddress, _warningMessage];
+  List<Object?> get props => [lastAddress, warningMessage];
 }
 
 // ============================================================================
@@ -75,25 +75,25 @@ final class SearchByCepOfflineSucessState extends CepAppState {
 // ============================================================================
 
 /// Sucesso na busca por Endereço. Entrega uma lista tipada e limpa.
-final class SearchByLocalDetailsSucsessState extends CepAppState {
-  final List<AddressEntity> _addressesList;
+final class SearchByLocalDetailsSuccessState extends CepAppState {
+  final List<AddressEntity> addressesList;
 
-  const SearchByLocalDetailsSucsessState(this._addressesList);
+  const SearchByLocalDetailsSuccessState(this.addressesList);
 
   @override
-  List<Object?> get props => [_addressesList];
+  List<Object?> get props => [addressesList];
 }
 
 /// Fallback offline para lista de endereços.
-final class SearchByLocalDetailsOfflineSucessState extends CepAppState {
-  final List<AddressEntity> _addressesList;
-  final String _warningMessage;
+final class SearchByLocalDetailsOfflineSuccessState extends CepAppState {
+  final List<AddressEntity> addressesList;
+  final String warningMessage;
 
-  const SearchByLocalDetailsOfflineSucessState(
-    this._addressesList,
-    this._warningMessage,
+  const SearchByLocalDetailsOfflineSuccessState(
+    this.addressesList,
+    this.warningMessage,
   );
 
   @override
-  List<Object?> get props => [_addressesList, _warningMessage];
+  List<Object?> get props => [addressesList, warningMessage];
 }
