@@ -1,60 +1,46 @@
-import 'package:cep_app/features/cep/data/data_sources/erros/cep_exceptions.dart';
+import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_state.dart';
+import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/shared/data/async/either.dart';
-import 'package:cep_app/shared/ui/extensions/snack_bar_extension.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final class SearchByCepNotifier extends StateNotifier<SearchByCepState> {
+final class SearchByCepNotifier extends StateNotifier<CepAppState> {
   final GetCepDetailsByCep _getCepDetailsByCep;
 
+  // Iniciamos com o estado base limpo
   SearchByCepNotifier(this._getCepDetailsByCep)
-    : super(const SearchByCepState.initial());
+    : super(const CepStateInitial());
 
-  bool get isLoading => state.isLoading;
+  // Um getter prático caso a UI só queira saber se trava um botão, por exemplo
+  bool get isLoading => state is CepStateLoading;
 
-  Future<void> loadAddressByCep(
-    SearchByCepParams cep, BuildContext context,
-  ) async {
-    state = state.copyWith(
-      isLoading: true,
-      errorMessage: null,
-      state: CepStateEnum.loading
-    );
+  Future<void> loadAddressByCep(SearchByCepParams cep) async {
+    // 1. Emitimos o estado de carregamento imediatamente
+    state = const CepStateLoading();
 
     final cepEither = await _getCepDetailsByCep(cep);
 
-    switch(cepEither) {
-      case Left(value: final l):
-      {
-        final noInternetError = l is CepInterConnectionException;
-
-        if (noInternetError && context.mounted) {
-          context.showSnackBar(SnackBarType.error, l.message);
+    // 2. Pattern Matching limpo do resultado
+    switch (cepEither) {
+      case Left(value: final failure):
+        {
+          // Usamos o novo Failure que criamos no domínio para o cache
+          if (failure is NotInternetWithAdressCacheFailure) {
+            state = SearchByCepOfflineSuccessState(
+              failure.lastSavedAddress,
+              failure.message,
+            );
+          } else {
+            // Qualquer outro erro genérico ou de validação
+            state = CepStateError(failure.message);
+          }
         }
-
-        state = state.copyWith(
-          isLoading: false,
-          state: noInternetError ? CepStateEnum.loaded : CepStateEnum.error,
-          errorMessage: noInternetError ? null : l.message,
-          cep: noInternetError ?  l.cep :null
-        );
-      }
-      case Right(value: final r):
-      {
-        state = state.copyWith(
-          isLoading: false,
-          state: CepStateEnum.loaded,
-          cep: r,
-
-        );
-      }
-
+      case Right(value: final address):
+        {
+          // Sucesso puro da API ou do banco local padrão
+          state = SearchByCepSuccessState(address);
+        }
     }
   }
-
-
 }

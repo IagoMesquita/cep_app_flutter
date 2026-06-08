@@ -1,58 +1,47 @@
-import 'package:cep_app/features/cep/data/data_sources/erros/cep_exceptions.dart';
+import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_ceps_details_by_local_details.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/search_by_local_details_state.dart';
+import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/shared/data/async/either.dart';
-import 'package:cep_app/shared/ui/extensions/snack_bar_extension.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final class SearchByLocalDetailsNotifier
-    extends StateNotifier<SearchByLocalDetailsState> {
+final class SearchByLocalDetailsNotifier extends StateNotifier<CepAppState> {
   final GetCepsDetailsByLocalDetails _getCepsDetailsByLocalDetails;
 
   SearchByLocalDetailsNotifier(this._getCepsDetailsByLocalDetails)
-    : super(const SearchByLocalDetailsState.initial());
+    : super(const CepStateInitial());
 
-  bool get isLoading => state.isLoading;
+  bool get isLoading => state is CepStateLoading;
 
   Future<void> loadAddressByLocalDetails(
     SearchByAddressParams addressParams,
-    BuildContext context,
   ) async {
-
-    state = state.copyWith(
-      isLoading: true,
-      errorMessage: null,
-      state: CepStateEnum.loading,
-    );
+    state = const CepStateLoading();
 
     final cepEither = await _getCepsDetailsByLocalDetails(addressParams);
 
-    switch(cepEither) {
-      case Left(value: final l): {
-        final noInternetError = l is LocalDetailsInternetConnectionException;
-
-        if (noInternetError && context.mounted) {
-          context.showSnackBar(SnackBarType.error, l.message);
+    switch (cepEither) {
+      case Left(value: final failure):
+        if (failure is NotInternetWithAdressesListCacheFailure) {
+          state = SearchByLocalDetailsOfflineSuccessState(
+            failure.lastSavedAddressesList,
+            failure.message,
+          );
+        } else {
+          state = CepStateError(failure.message);
         }
 
-        state = state.copyWith(
-          isLoading: false,
-          state: noInternetError ? CepStateEnum.loaded : CepStateEnum.error,
-          errorMessage: noInternetError ? null : l.message, 
-          localDetailsList: noInternetError ? l.cepList : null,
-        );
-      }
-
-      case Right(value: final r): {
-        state = state.copyWith(
-          isLoading: false,
-          state: r.isEmpty ? CepStateEnum.noResult : CepStateEnum.loaded,
-          localDetailsList: r,
-        );
-      } 
+      case Right(value: final addressesList):
+        {
+          // Tratamento elegante para lista vazia retornada pela API
+          if (addressesList.isEmpty) {
+            state = const CepStateNoResult(
+              'Nenhum endereço encontrado para os dados informados.',
+            );
+          } else {
+            state = SearchByLocalDetailsSuccessState(addressesList);
+          }
+        }
     }
   }
 }
