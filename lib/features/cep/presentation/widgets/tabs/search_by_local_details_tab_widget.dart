@@ -1,18 +1,21 @@
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
 import 'package:cep_app/features/cep/presentation/mixins/search_cep_local_details_mixin.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
+import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/local_details_notifier_provider.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/search_by_local_details_notifier.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/search_by_local_details_state.dart';
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
+import 'package:cep_app/shared/ui/extensions/snack_bar_extension.dart';
 import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const Key searchZipCodeByLocalDetailsButtonKey = Key('searchZipCodeByLocalDetailsButtonKey');
+const Key searchZipCodeByLocalDetailsButtonKey = Key(
+  'searchZipCodeByLocalDetailsButtonKey',
+);
 
 class SearchByLocalDetailsTabWidget extends ConsumerStatefulWidget {
   const SearchByLocalDetailsTabWidget({super.key});
@@ -34,18 +37,25 @@ class _SearchByLocalDetailsTabWidgetState
         cidade: cidadeTEC.text,
         rua: ruaTEC.text,
       );
-      notifier.loadAddressByLocalDetails(body, context);
+      notifier.loadAddressByLocalDetails(body);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch<SearchByLocalDetailsState>(
-      searchByLocalDetailsNotifierProvider,
-    );
-    final notifier = ref.watch<SearchByLocalDetailsNotifier>(
-      searchByLocalDetailsNotifierProvider.notifier,
-    );
+    // Escuta o estado para injetar o aviso visual de contingência offline na UI
+    ref.listen<CepAppState>(searchByLocalDetailsNotifierProvider, (
+      previous,
+      next,
+    ) {
+      if (next is SearchByLocalDetailsOfflineSuccessState && context.mounted) {
+        context.showSnackBar(SnackBarType.error, next.warningMessage);
+      }
+    });
+
+    final state = ref.watch(searchByLocalDetailsNotifierProvider);
+    final notifier = ref.watch(searchByLocalDetailsNotifierProvider.notifier);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Form(
@@ -97,61 +107,71 @@ class _SearchByLocalDetailsTabWidgetState
               const SizedBox(height: 32),
               CepButtonWidget(
                 key: searchZipCodeByLocalDetailsButtonKey,
-                label: 'Procurara',
+                label: 'Procurar',
                 onPressed: () {
-                  if (state.state == CepStateEnum.loading) {
-                    return;
-                  }
+                  if (state is CepStateLoading) return;
+
                   FocusScope.of(context).requestFocus(FocusNode());
                   onSearchByLocalDetails(notifier);
                 },
               ),
               const SizedBox(height: 16),
-              switch (state.state) {
-                CepStateEnum.error => Text(state.errorMessage!),
-                CepStateEnum.loading => const CircularProgressIndicator(),
-                CepStateEnum.loaded => Column(
-                  children: [
-                    const SizedBox(height: 32),
-                    Text('Resultados:', style: context.getTextTheme.titleLarge),
-                    const SizedBox(height: 32),
-                    Column(
-                      children:
-                          state.localDetailsList
-                              ?.map(
-                                (localDetailsItem) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(localDetailsItem.cep),
-                                      const SizedBox(height: 8),
-                                      Text(localDetailsItem.localidade),
-                                      const SizedBox(height: 8),
-                                      Text(localDetailsItem.bairro),
-                                      const SizedBox(height: 8),
-                                      Text(localDetailsItem.uf),
-                                      const SizedBox(height: 8),
-                                    ],
-                                  ),
-                                ),
-                              )
-                              .toList() ??
-                          [],
-                    ),
-                  ],
+              switch (state) {
+                CepStateInitial() => const SizedBox.shrink(),
+                CepStateLoading() => const CircularProgressIndicator(),
+                CepStateError(:final message) => Text(message),
+                CepStateNoResult(:final message) => NoResultWidget(
+                  text: message,
                 ),
-                CepStateEnum.initial => const SizedBox.shrink(),
-                CepStateEnum.noResult => const NoResultWidget(
-                  text: 'Sem resultados, tente outro local',
-                ),
+                SearchByLocalDetailsSuccessState(:final addressesList) =>
+                  _AddressesListResult(addressesList: addressesList),
+                SearchByLocalDetailsOfflineSuccessState(:final addressesList) =>
+                  _AddressesListResult(addressesList: addressesList),
+                _ => SizedBox.shrink(),
               },
-              const SizedBox(height: 16,)
+              const SizedBox(height: 16),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AddressesListResult extends StatelessWidget {
+  final List<AddressEntity> addressesList;
+
+  const _AddressesListResult({required this.addressesList});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 32),
+        Text('Resultados:', style: context.getTextTheme.titleLarge),
+        const SizedBox(height: 32),
+        Column(
+          children: addressesList
+              .map(
+                (localDetailsItem) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    children: [
+                      Text(localDetailsItem.cep),
+                      const SizedBox(height: 8),
+                      Text(localDetailsItem.localidade),
+                      const SizedBox(height: 8),
+                      Text(localDetailsItem.bairro),
+                      const SizedBox(height: 8),
+                      Text(localDetailsItem.uf),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ],
     );
   }
 }

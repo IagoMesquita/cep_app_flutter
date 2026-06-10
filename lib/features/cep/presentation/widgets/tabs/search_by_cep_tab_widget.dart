@@ -1,18 +1,20 @@
+import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
 import 'package:cep_app/features/cep/presentation/mixins/cep_tec_mixin.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/base_cep_app_state.dart';
+import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/cep_notifier_provider.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_notifier.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_state.dart';
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
+import 'package:cep_app/shared/ui/extensions/snack_bar_extension.dart';
 import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const searchByZipCodeButtonKey = Key('searchByZipCodeButtonKey');
+
 class SearchByCepTabWidget extends ConsumerStatefulWidget {
   const SearchByCepTabWidget({super.key});
 
@@ -39,16 +41,20 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
     );
 
     if (formKey.currentState!.validate()) {
-      notifier.loadAddressByCep(
-        SearchByCepParams(cep: cepTEC.text),
-        context,
-      );
+      notifier.loadAddressByCep(SearchByCepParams(cep: cepTEC.text));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch<SearchByCepState>(searchByCepNotifierProvider);
+    // Escuta o estado para disparar efeitos colaterais visuais (Ex: SnackBars)
+    ref.listen<CepAppState>(searchByCepNotifierProvider, (previous, next) {
+      if (next is SearchByCepOfflineSuccessState && context.mounted) {
+        context.showSnackBar(SnackBarType.error, next.warningMessage);
+      }
+    });
+
+    final state = ref.watch(searchByCepNotifierProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -75,7 +81,7 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
               CepButtonWidget(
                 key: searchByZipCodeButtonKey,
                 label: 'Procurar',
-                onPressed: state.state == CepStateEnum.loading
+                onPressed: state is CepStateLoading
                     ? null
                     : () {
                         cepInputFN.unfocus();
@@ -83,34 +89,52 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
                       },
               ),
               const SizedBox(height: 32),
-              switch (state.state) {
-                CepStateEnum.error => Text(state.errorMessage!),
-                CepStateEnum.loading => CircularProgressIndicator(),
-                CepStateEnum.loaded => Column(
-                  children: [
-                    Text('Resultado:', style: context.getTextTheme.titleLarge),
-                    const SizedBox(height: 32),
-                    Column(
-                      children: [
-                        Text(state.cep!.cep),
-                        const SizedBox(height: 8),
-                        Text(state.cep!.localidade),
-                        const SizedBox(height: 8),
-                        Text(state.cep!.bairro),
-                        const SizedBox(height: 8),
-                        Text(state.cep!.uf),
-                        const SizedBox(height: 8),
-                      ],
-                    ),
-                  ],
+              switch (state) {
+                CepStateInitial() => const SizedBox.shrink(),
+                CepStateLoading() => CircularProgressIndicator(),
+                CepStateError(:final message) => Text(message),
+                CepStateNoResult(:final message) => NoResultWidget(
+                  text: message,
                 ),
-                CepStateEnum.initial => const SizedBox.shrink(),
-                CepStateEnum.noResult => NoResultWidget(text: 'Sem resultado, tente outro CEP.')
+                SearchByCepSuccessState(:final address) => _AddressResult(
+                  address: address,
+                ),
+                SearchByCepOfflineSuccessState(:final lastAddress) =>
+                  _AddressResult(address: lastAddress),
+                _ => const SizedBox.shrink(),
               },
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AddressResult extends StatelessWidget {
+  final AddressEntity address;
+
+  const _AddressResult({required this.address});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('Resultado:', style: context.getTextTheme.titleLarge),
+        const SizedBox(height: 32),
+        Column(
+          children: [
+            Text(address.cep),
+            const SizedBox(height: 8),
+            Text(address.localidade),
+            const SizedBox(height: 8),
+            Text(address.bairro),
+            const SizedBox(height: 8),
+            Text(address.uf),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ],
     );
   }
 }
