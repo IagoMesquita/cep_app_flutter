@@ -164,4 +164,24 @@ Evoluímos o design de controle de estados da camada de apresentação unificand
 - **Segregação de Dados em Tipos Concretos:** Eliminamos a necessidade de herança de propriedades mutáveis (`copyWith` na base) e de tipos opcionais/nulos em estados de sucesso. Cada tipo concreto carrega apenas o contrato exato que a UI precisa renderizar.
 - **Diferenciação Semântica de Sucesso Local/Remoto:** Criamos distinções explícitas entre dados puros e dados recuperados via mecanismos de contingência (`OfflineSuccess`), facilitando o comportamento reativo de banners e componentes visuais na View.
 - **Redução de Código Boilerplate:** A eliminação de múltiplos arquivos de estado e construtores de herança reduz as linhas de código de manutenção da feature em mais de 45%, mantendo a legibilidade arquitetural intacta.
-ONDE PAREI: adicionei NotInternetWithCacheFailure. mas ainda nao usei.
+
+## 7. Refatoração dos Notifiers e Isolamento da UI
+
+Aplicamos os conceitos de Clean Architecture na camada de Presentation, garantindo que o gerenciamento de estado (Notifiers) desconheça totalmente a existência do framework visual do Flutter.
+
+### Conceitos Chave:
+- **Separação de Responsabilidades (SRP):** Removemos o `BuildContext` de dentro dos Notifiers. A responsabilidade de exibir alertas (como SnackBars) pertence exclusivamente aos Widgets da View, que devem apenas reagir às emissões de estado.
+- **Transições de Estado Limpas:** Eliminamos o uso de `state.copyWith`. Agora, cada etapa da requisição substitui o estado anterior por uma nova instância selada e tipada (`CepStateLoading`, `SearchByCepSucessState`, etc.), tornando o fluxo unidirecional e previsível.
+- **Visibilidade de Propriedades:** Garantimos que os dados transportados pelos estados (como mensagens e entidades) sejam expostos publicamente, permitindo que a árvore de Widgets os consuma via pattern matching.
+
+## 8. Pattern Matching e Efeitos Colaterais Reativos na UI
+
+Concluímos o ciclo refatorando os componentes visuais (Widgets), adequando-os para consumir a infraestrutura de estados selados de maneira reativa e idiomática.
+
+### Conceitos Chave:
+- **UI Declarativa com Switch Expressions:** Substituímos condicionais imperativas por mapeamento de tipos direto na árvore de compilação. A UI agora reflete perfeitamente as ramificações de domínio sem a necessidade de checagens manuais de nulo ou lógica interna complexa.
+- **Gerenciamento de Efeitos Colaterais Visuais (`ref.listen`):** Padronizamos que reações momentâneas na interface (como SnackBars, diálogos ou navegações) não modificam o fluxo de dados dos Notifiers. Elas são escutadas de forma isolada na UI, preservando o ciclo de vida nativo do `BuildContext`.
+- **Componentização Local:** Isolamos layouts repetitivos de sucesso em widgets privados de arquivo único, respeitando o princípio de reutilização e mantendo a legibilidade do método `build` principal.
+
+ONDE PAREI:
+LEr o Gemini, fiz pergunta, ver como continuar, apontar erro do offline, ou continuar estudo?
