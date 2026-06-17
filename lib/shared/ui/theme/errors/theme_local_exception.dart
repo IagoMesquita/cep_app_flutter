@@ -1,11 +1,9 @@
-import 'package:cep_app/shared/errors/base_failure.dart';
-
-final class ThemeLocalException extends BaseFailure {
-  ThemeLocalException({ super.message });
+final class ThemeLocalException implements Exception {
+  final String message;
+  ThemeLocalException({required this.message});
 }
 
 //Forma antiga de passar o super
 // final class ThemeLocalException extends BaseExceptions {
 //  ThemeLocalException({ String? message }) : super(message: message);
 //}
-

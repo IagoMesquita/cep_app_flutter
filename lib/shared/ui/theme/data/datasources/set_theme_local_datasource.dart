@@ -1,10 +1,13 @@
-import 'package:cep_app/shared/data/async/either.dart';
+import 'package:cep_app/shared/data/local/errors/local_exception.dart';
 import 'package:cep_app/shared/data/local/local_service/local_service.dart';
 import 'package:cep_app/shared/ui/theme/data/datasources/get_theme_local_datasource.dart';
 import 'package:cep_app/shared/ui/theme/errors/theme_local_exception.dart';
 
 abstract class SetThemeLocalDatasource {
-  Future<Either<ThemeLocalException, void>> setIsLightTheme(bool isLightTheme);
+  /// Persiste a preferência de tema do usuário no dispositivo.
+  ///
+  /// Throws a [ThemeLocalException] se o serviço de cache falhar na gravação.
+  Future<void> setIsLightTheme(bool isLightTheme);
 }
 
 final class SetThemeLocalDatasourceImpl implements SetThemeLocalDatasource {
@@ -13,19 +16,13 @@ final class SetThemeLocalDatasourceImpl implements SetThemeLocalDatasource {
   SetThemeLocalDatasourceImpl(this._localService);
 
   @override
-  Future<Either<ThemeLocalException, void>> setIsLightTheme(
-    bool isLightTheme,
-  ) async {
-    final isLightThemeEither = await _localService.set<bool>(
-      IS_LIGHT_THEME_KEY,
-      isLightTheme,
-    );
-
-    switch (isLightThemeEither) {
-      case Left():
-        return Left(ThemeLocalException(message: 'Error ao trocar o tema'));
-      case Right():
-        return Right(null);
+  Future<void> setIsLightTheme(bool isLightTheme) async {
+    try {
+      await _localService.set<bool>(IS_LIGHT_THEME_KEY, isLightTheme);
+    } on LocalException catch (e) {
+      throw ThemeLocalException(message: 'Erro ao salvar a preferência de tema.');
+    } catch (e) {
+      throw ThemeLocalException(message: 'Erro inesperado ao salvar o tema.');
     }
   }
 }
