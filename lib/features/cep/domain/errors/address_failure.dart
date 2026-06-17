@@ -18,7 +18,7 @@ final class NotInternetWithAdressCacheFailure extends AddressFailure {
   NotInternetWithAdressCacheFailure({required this.lastSavedAddress}) : super(message: 'Sem conexão com a internet. Exibindo última consulta realizada.');
 } 
 
-final class NotInternetWithAdressesListCacheFailure extends AddressFailure {
+final class NotInternetWithAddressesListCacheFailure extends AddressFailure {
   final List<AddressEntity> lastSavedAddressesList;
-  NotInternetWithAdressesListCacheFailure({required this.lastSavedAddressesList}) : super(message: 'Sem conexão com a internet. Exibindo última consulta realizada.');
+  NotInternetWithAddressesListCacheFailure({required this.lastSavedAddressesList}) : super(message: 'Sem conexão com a internet. Exibindo última consulta realizada.');
 } 

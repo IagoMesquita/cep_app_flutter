@@ -1,5 +1,3 @@
-import 'package:cep_app/shared/data/models/api_base_model.dart';
-
 enum ErrorStatus {
   unauthorized,
   noConnection,
@@ -8,14 +6,17 @@ enum ErrorStatus {
   unknown,
 }
 
-final class ApiException extends ApiBaseModel implements Exception {
+final class ApiException implements Exception {
   final String identifier;
   final ErrorStatus errorStatus;
+  final int? statusCode;
+  final String message;
+
 
   ApiException({
     required this.identifier,
     required this.errorStatus,
-    required super.statusCode,
-    super.message,
+     this.statusCode,
+    required this.message,
   });
 }
