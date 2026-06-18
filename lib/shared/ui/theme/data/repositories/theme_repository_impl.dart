@@ -1,10 +1,11 @@
 import 'package:cep_app/shared/data/async/either.dart';
 import 'package:cep_app/shared/ui/theme/data/datasources/get_theme_local_datasource.dart';
 import 'package:cep_app/shared/ui/theme/data/datasources/set_theme_local_datasource.dart';
+import 'package:cep_app/shared/ui/theme/domain/errors/theme_failure.dart';
 import 'package:cep_app/shared/ui/theme/domain/repositories/theme_repository.dart';
 import 'package:cep_app/shared/ui/theme/errors/theme_local_exception.dart';
 
-class ThemeRepositoryImpl implements ThemeRepository {
+final class ThemeRepositoryImpl implements ThemeRepository {
   final SetThemeLocalDatasource _setThemeLocalDatasource;
   final GetThemeLocalDatasource _getThemeLocalDatasource;
 
@@ -14,12 +15,37 @@ class ThemeRepositoryImpl implements ThemeRepository {
   );
 
   @override
-  Future<Either<ThemeLocalException, bool>> getIsLightTheme() {
-    return _getThemeLocalDatasource.getIsLightTheme();
+  Future<Either<ThemeFailure, bool>> getIsLightTheme() async {
+    try {
+      // 1. O DataSource agora retorna o bool direto (ou joga um throw)
+      final isLightTheme = await _getThemeLocalDatasource.getIsLightTheme();
+      
+      return Right(isLightTheme);
+      
+    } on ThemeLocalException catch (e) {
+      // 2. Interceptamos a Exception técnica e convertemos na Failure de negócio
+      return Left(ThemeFailure(message: e.message));
+      
+    } catch (e) {
+      // 3. Fallback para erros totalmente desconhecidos
+      return Left(const ThemeFailure(message: 'Erro inesperado ao carregar o tema.'));
+    }
   }
 
   @override
-  Future<Either<ThemeLocalException, void>> setIsLightTheme(bool isLightTheme) {
-    return _setThemeLocalDatasource.setIsLightTheme(isLightTheme);
+  Future<Either<ThemeFailure, void>> setIsLightTheme(bool isLightTheme) async {
+    try {
+      // 1. O DataSource executa a operação pura
+      await _setThemeLocalDatasource.setIsLightTheme(isLightTheme);
+      
+      return Right(null);
+      
+    } on ThemeLocalException catch (e) {
+      // 2. Interceptamos e traduzimos
+      return Left(ThemeFailure(message: e.message));
+      
+    } catch (e) {
+      return Left(const ThemeFailure(message: 'Erro inesperado ao salvar o tema.'));
+    }
   }
 }
