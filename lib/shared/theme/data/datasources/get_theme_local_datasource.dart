@@ -1,6 +1,6 @@
 import 'package:cep_app/shared/data/local/errors/local_exception.dart';
 import 'package:cep_app/shared/data/local/local_service/local_service.dart';
-import 'package:cep_app/shared/ui/theme/errors/theme_local_exception.dart';
+import 'package:cep_app/shared/theme/errors/theme_local_exception.dart';
 
 abstract class GetThemeLocalDatasource {
   /// Recupera o estado do tema salvo no dispositivo.

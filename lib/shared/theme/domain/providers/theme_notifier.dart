@@ -1,7 +1,7 @@
-import 'package:cep_app/shared/data/async/either.dart';
+import 'package:cep_app/shared/core/async/either.dart';
+import 'package:cep_app/shared/theme/domain/providers/theme_state.dart';
+import 'package:cep_app/shared/theme/domain/repositories/theme_repository.dart';
 import 'package:cep_app/shared/ui/extensions/snack_bar_extension.dart';
-import 'package:cep_app/shared/ui/theme/domain/providers/theme_state.dart';
-import 'package:cep_app/shared/ui/theme/domain/repositories/theme_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,7 +1,7 @@
 import 'package:cep_app/shared/data/local/errors/local_exception.dart';
 import 'package:cep_app/shared/data/local/local_service/local_service.dart';
-import 'package:cep_app/shared/ui/theme/data/datasources/get_theme_local_datasource.dart';
-import 'package:cep_app/shared/ui/theme/errors/theme_local_exception.dart';
+import 'package:cep_app/shared/theme/data/datasources/get_theme_local_datasource.dart';
+import 'package:cep_app/shared/theme/errors/theme_local_exception.dart';
 
 abstract class SetThemeLocalDatasource {
   /// Persiste a preferência de tema do usuário no dispositivo.

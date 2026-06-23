@@ -1,9 +1,9 @@
-import 'package:cep_app/shared/data/async/either.dart';
-import 'package:cep_app/shared/ui/theme/data/datasources/get_theme_local_datasource.dart';
-import 'package:cep_app/shared/ui/theme/data/datasources/set_theme_local_datasource.dart';
-import 'package:cep_app/shared/ui/theme/domain/errors/theme_failure.dart';
-import 'package:cep_app/shared/ui/theme/domain/repositories/theme_repository.dart';
-import 'package:cep_app/shared/ui/theme/errors/theme_local_exception.dart';
+import 'package:cep_app/shared/core/async/either.dart';
+import 'package:cep_app/shared/theme/data/datasources/get_theme_local_datasource.dart';
+import 'package:cep_app/shared/theme/data/datasources/set_theme_local_datasource.dart';
+import 'package:cep_app/shared/theme/domain/errors/theme_failure.dart';
+import 'package:cep_app/shared/theme/domain/repositories/theme_repository.dart';
+import 'package:cep_app/shared/theme/errors/theme_local_exception.dart';
 
 final class ThemeRepositoryImpl implements ThemeRepository {
   final SetThemeLocalDatasource _setThemeLocalDatasource;
