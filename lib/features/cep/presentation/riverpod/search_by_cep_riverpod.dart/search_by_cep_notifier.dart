@@ -2,7 +2,7 @@ import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
 import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
-import 'package:cep_app/shared/data/async/either.dart';
+import 'package:cep_app/shared/core/async/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class SearchByCepNotifier extends StateNotifier<CepAppState> {
