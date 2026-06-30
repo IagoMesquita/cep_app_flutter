@@ -7,7 +7,7 @@ import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
 import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/shared/const/const_strings.dart';
-import 'package:cep_app/shared/data/async/either.dart';
+import 'package:cep_app/shared/core/async/either.dart';
 import 'package:cep_app/shared/data/remote/errors/no_internet_exception.dart';
 
 // Reafatoracao:
@@ -30,61 +30,67 @@ class CepRepositoryImpl implements CepRepository {
     SearchByCepParams cep,
   ) async {
     try {
-      // Tenta buscar dados remotos
-      final cepEitherResponse = await _remoteDataSource.getAddressByCep(
-        cep,
-      );
+      // 1. O DataSource remoto retorna o Model puro ou joga um throw
+      final addressModel = await _remoteDataSource.getAddressByCep(cep);
 
-      switch (cepEitherResponse) {
-        case Left(value: final l):
-          return Left(l);
-        case Right(value: final r):
-          // Sucesso: salva no cache e retorna
-          await _localDataSource.saveAddressToCache(r);
-          return Right(r);
-      }
+      // 2. Fluxo de sucesso: salva no cache de forma assíncrona e retorna à camada superior
+      await _localDataSource.saveAddressToCache(addressModel);
+      return Right(addressModel);
     } on NoInternetException {
-      // Sem internet: busca no cache local
-      final localCep = await _localDataSource.getAddressFromCache();
-
-      return switch (localCep) {
-        Left(value: final l) => Left(CepLocalException(message: l.message)),
-        Right(value: final r) => Left(CepInterConnectionException(cep: r)),
-      };
+      try {
+        // 3. Sem conexão: tenta recuperar a última consulta válida salva localmente
+        final cachedAddress = await _localDataSource.getAddressFromCache();
+        if (cachedAddress != null) {
+          // Entrega o dado antigo encapsulado na Failure de contingência offline!
+          return Left(
+            NotInternetWithAdressCacheFailure(lastSavedAddress: cachedAddress),
+          );
+        }
+        return Left(
+          AddressFailure(message: ConstStrings.kNoInternetConnectionMessage),
+        );
+      } on CepLocalException catch (e) {
+        return Left(AddressFailure(message: e.message));
+      }
+    } on CepRemoteException catch (e) {
+      return Left(AddressFailure(message: e.message));
     } catch (e) {
-      // Erro inesperado
       return Left(AddressFailure(message: ConstStrings.kDefaultError));
     }
   }
 
   @override
-  Future<Either<AddressFailure, List<AddressEntity>>>
-  getAddressesListByAdress(SearchByAddressParams addressParams) async {
+  Future<Either<AddressFailure, List<AddressEntity>>> getAddressesListByAdress(
+    SearchByAddressParams addressParams,
+  ) async {
     try {
-      final cepResponseByLocalDetailsEither = await _remoteDataSource
-          .getAddressesListByAddress(addressParams);
+      final addressesList = await _remoteDataSource.getAddressesListByAddress(
+        addressParams,
+      );
 
-      switch (cepResponseByLocalDetailsEither) {
-        case Left(value: final l):
-          return Left(l);
-        case Right(value: final r):
-          // Sucesso: salva no cache e retorna
-          await _localDataSource.saveAddressesListToCache(r);
-          return Right(r);
-      }
+      await _localDataSource.saveAddressesListToCache(addressesList);
+
+      return Right(addressesList);
     } on NoInternetException {
-          // Sem internet: busca no cache local
-      final localListOfAddressEntity =
-          await _localDataSource.getAddressesListFromCache();
+      try {
+        final cachedList = await _localDataSource.getAddressesListFromCache();
+        if (cachedList != null && cachedList.isNotEmpty) {
+          return Left(
+            NotInternetWithAddressesListCacheFailure(
+              lastSavedAddressesList: cachedList,
+            ),
+          );
+        }
 
-      return switch (localListOfAddressEntity) {
-        Left(value: final l) => Left(CepLocalException(message: l.message)),
-        Right(value: final r) => Left(
-          LocalDetailsInternetConnectionException(cepList: r),
-        ),
-      };
-    } catch (e) {
-      // Erro inesperado
+        return Left(
+          AddressFailure(message: ConstStrings.kNoInternetConnectionMessage),
+        );
+      } on CepLocalException catch (e) {
+        return Left(AddressFailure(message: e.message));
+      }
+    } on CepRemoteException catch (e) {
+      return Left(AddressFailure(message: e.message));
+    } catch (_) {
       return Left(AddressFailure(message: ConstStrings.kDefaultError));
     }
   }
