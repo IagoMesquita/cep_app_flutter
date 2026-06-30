@@ -147,6 +147,20 @@ Discutimos profundamente como alinhar o retorno do padrão `Either` com a expect
 ### Decisão Arquitetural:
 Mantivemos o fluxo de falta de internet operando no `Left`, substituindo o uso de exceções técnicas por um `NoInternetWithCacheFailure` fortemente tipado no domínio, garantindo o transporte seguro do último endereço salvo até a interface do usuário.
 
+### 🔄 Pipeline de Serialização e Parse de Dados
+
+Para garantir o desacoplamento total da camada de negócio (`Domain`), adotamos uma separação estrita entre **Entidades** e **Modelos**.
+
+* **Entidades (Pureza):** Representam os dados de negócio. São imutáveis e desconhecem formatos de transporte (JSON, Map, XML).
+* **Modelos (Adaptadores):** Estendem as entidades na camada de `Data` e contêm a responsabilidade única de serialização/deserialização (`fromMap`, `fromJson`, `toMap`, `toJson`).
+
+### Fluxo de Transformação do Dado:
+1. **Entrada:** `API (JSON)` ➔ `DataSource (Model)` ➔ `Repository (Retorna como Entity através de Polimorfismo)`.
+2. **Saída/Persistência:** `Repository (Recebe Entity/Model)` ➔ `DataSource (Converte Model para String JSON)` ➔ `Cache Local (SharedPreferences)`.
+
+---
+
+
 ## 5. Modelagem de Estados com Tipos Algébricos (Sealed Classes)
 
 Aprofundamos o gerenciamento de estados na camada de Presentation, migrando de arquiteturas baseadas em propriedades booleanas/enums para classes seladas.
@@ -155,6 +169,14 @@ Aprofundamos o gerenciamento de estados na camada de Presentation, migrando de a
 - **Estados Impossíveis:** Evitamos erros em tempo de execução garantindo que dados de sucesso e estados de carregamento ou erro nunca coexistam na mesma instância de forma inconsistente.
 - **Exaustividade (Exhaustiveness Checking):** Ao usar `sealed classes`, o Dart nos obriga via compilador a tratar todos os cenários possíveis de tela no padrão `switch`, aumentando drasticamente a resiliência contra novas manutenções.
 - **Casos de Uso Complexos como Estado:** O nosso `NoInternetWithCacheFailure` agora se traduz perfeitamente em um tipo de estado exclusivo (`CepSearchNoInternetWithCache`), permitindo que a interface reaja de forma rica e específica a essa regra de negócio.
+
+### 🔀 O Padrão Funcional Either (Dart 3+)
+
+Utilizamos o padrão `Either<L, R>` para expressar explicitamente a possibilidade de falha sem recorrer ao lançamento de exceções síncronas/assíncronas nas camadas de Domínio e Apresentação.
+
+### Mecanismo de Segurança de Tipos:
+* Graças ao modificador `sealed` do Dart 3, o compilador rastreia a exaustividade dos retornos.
+* O fluxo obriga a utilização de recursos nativos como o `switch (either)` para desestruturação, eliminando cláusulas `default` genéricas e garantindo que cenários de erro (`Left`) nunca sejam ignorados pela interface do usuário.
 
 ## 6. Centralização de Sub-estados em Árvores Seladas Unificadas
 
@@ -184,4 +206,10 @@ Concluímos o ciclo refatorando os componentes visuais (Widgets), adequando-os p
 - **Componentização Local:** Isolamos layouts repetitivos de sucesso em widgets privados de arquivo único, respeitando o princípio de reutilização e mantendo a legibilidade do método `build` principal.
 
 ONDE PAREI:
-LEr o Gemini, fiz pergunta, ver como continuar, apontar erro do offline, ou continuar estudo?
+Para corrigir o bug de sempre cair no erro generico e nao no snackbar para offile, estamos aproveitando para refatoar todo o fluxo de excecao e falha,Ja corrigimos tudo de Theme, deixando tudo em data sem Eihter apenas enviando sucesso e lancandio excecao com throw, no repositeroy que capturamos a execao e mandamos o failure com either
+Fizemos tambem com Local e Remote service
+
+Ler o GEmini
+Ja li e ficou bem mas clado da mudanca de dados.
+Falta o either e ler o markdown. Depois rever o UseCase/
+Perguntar tambem sobre  chamar modular ou provider na UI
