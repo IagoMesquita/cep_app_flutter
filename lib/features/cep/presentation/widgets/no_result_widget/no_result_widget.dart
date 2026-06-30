@@ -1,4 +1,4 @@
-import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
+import 'package:cep_app/shared/theme/extensions/theme_extension.dart';
 import 'package:flutter/widgets.dart';
 
 class NoResultWidget extends StatelessWidget {

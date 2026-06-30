@@ -8,8 +8,8 @@ import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpo
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
+import 'package:cep_app/shared/theme/extensions/theme_extension.dart';
 import 'package:cep_app/shared/ui/extensions/snack_bar_extension.dart';
-import 'package:cep_app/shared/ui/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
