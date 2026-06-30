@@ -1,5 +1,5 @@
 import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
-import 'package:cep_app/shared/errors/base_failure.dart';
+import 'package:cep_app/shared/domain/errors/base_failure.dart';
 
 base class AddressFailure extends BaseFailure {
   AddressFailure({ super.message });

@@ -1,26 +1,14 @@
-import 'package:cep_app/features/cep/data/models/address_model.dart';
-import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
-import 'package:cep_app/features/cep/domain/errors/address_failure.dart';
-import 'package:cep_app/shared/const/const_strings.dart';
 
-final class CepLocalException extends AddressFailure {
-  CepLocalException({super.message});
+/// Exceção lançada quando ocorre um erro técnico ou falha de negócio
+/// na comunicação com o servidor remoto de CEP.
+final class CepLocalException implements Exception {
+  final String message;
+  CepLocalException({required this.message});
 }
 
-final class CepRemoteException extends AddressFailure {
-  CepRemoteException({super.message});
-}
-
-final class CepInterConnectionException extends AddressFailure {
-  final AddressEntity? cep;
-
-  CepInterConnectionException({this.cep})
-    : super(message: ConstStrings.kNoInternetConnectionMessage);
-}
-
-final class LocalDetailsInternetConnectionException extends AddressFailure {
-  final List<AddressModel>? cepList;
-
-  LocalDetailsInternetConnectionException({this.cepList})
-    : super(message: ConstStrings.kNoInternetConnectionMessage);
+/// Exceção lançada quando ocorre uma falha na leitura ou escrita
+/// do cache local do dispositivo referente aos dados de CEP.
+final class CepRemoteException implements Exception {
+  final String message;
+  CepRemoteException({required this.message});
 }
