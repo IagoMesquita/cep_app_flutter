@@ -6,10 +6,10 @@ import 'package:cep_app/shared/core/async/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class SearchByCepNotifier extends StateNotifier<CepAppState> {
-  final SearchAddressByCep _SearchAddressByCep;
+  final SearchAddressByCep _searchAddressByCep;
 
   // Iniciamos com o estado base limpo
-  SearchByCepNotifier(this._SearchAddressByCep)
+  SearchByCepNotifier(this._searchAddressByCep)
     : super(const CepStateInitial());
 
   // Um getter prático caso a UI só queira saber se trava um botão, por exemplo
@@ -19,7 +19,7 @@ final class SearchByCepNotifier extends StateNotifier<CepAppState> {
     // 1. Emitimos o estado de carregamento imediatamente
     state = const CepStateLoading();
 
-    final cepEither = await _SearchAddressByCep(cep);
+    final cepEither = await _searchAddressByCep(cep);
 
     // 2. Pattern Matching limpo do resultado
     switch (cepEither) {

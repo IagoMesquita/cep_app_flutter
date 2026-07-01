@@ -6,9 +6,9 @@ import 'package:cep_app/shared/core/async/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class SearchByLocalDetailsNotifier extends StateNotifier<CepAppState> {
-  final SearchCepsByAddressDetails _SearchCepsByAddressDetails;
+  final SearchCepsByAddressDetails _searchCepsByAddressDetails;
 
-  SearchByLocalDetailsNotifier(this._SearchCepsByAddressDetails)
+  SearchByLocalDetailsNotifier(this._searchCepsByAddressDetails)
     : super(const CepStateInitial());
 
   bool get isLoading => state is CepStateLoading;
@@ -18,7 +18,7 @@ final class SearchByLocalDetailsNotifier extends StateNotifier<CepAppState> {
   ) async {
     state = const CepStateLoading();
 
-    final cepEither = await _SearchCepsByAddressDetails(addressParams);
+    final cepEither = await _searchCepsByAddressDetails(addressParams);
 
     switch (cepEither) {
       case Left(value: final failure):
