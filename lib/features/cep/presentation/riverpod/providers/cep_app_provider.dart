@@ -4,8 +4,8 @@ import 'package:cep_app/features/cep/data/data_sources/local/cep_local_data_sour
 import 'package:cep_app/features/cep/data/data_sources/remote/cep_remote_data_source_impl.dart';
 import 'package:cep_app/features/cep/data/repositories/cep_repository_impl.dart';
 import 'package:cep_app/features/cep/domain/repositories/cep_repository.dart';
-import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
-import 'package:cep_app/features/cep/domain/use_cases/get_ceps_details_by_local_details.dart';
+import 'package:cep_app/features/cep/domain/use_cases/search_address_by_cep.dart';
+import 'package:cep_app/features/cep/domain/use_cases/search_ceps_by_address_details.dart';
 import 'package:cep_app/shared/data/local/local_service/local_service.dart';
 import 'package:cep_app/shared/data/remote/api_service.dart';
 import 'package:cep_app/shared/domain/providers/api_provider.dart';
@@ -40,14 +40,14 @@ final cepRepositoryProvider = Provider<CepRepository>(
 );
 
 /// Caso de Uso: Busca de CEP direta (Ex: '64200000')
-final getCepDetailsByCepProvider = Provider<GetCepDetailsByCep>(
-  (ref) => GetCepDetailsByCep(ref.read<CepRepository>(cepRepositoryProvider)),
+final SearchAddressByCepProvider = Provider<SearchAddressByCep>(
+  (ref) => SearchAddressByCep(ref.read<CepRepository>(cepRepositoryProvider)),
 );
 
 /// Caso de Uso: Busca de CEP por Endereço (Estado, Cidade, Rua)
 final getCepDetailsByLocalDetailsProvider =
-    Provider<GetCepsDetailsByLocalDetails>(
-      (ref) => GetCepsDetailsByLocalDetails(
+    Provider<SearchCepsByAddressDetails>(
+      (ref) => SearchCepsByAddressDetails(
         ref.read<CepRepository>(cepRepositoryProvider),
       ),
     );

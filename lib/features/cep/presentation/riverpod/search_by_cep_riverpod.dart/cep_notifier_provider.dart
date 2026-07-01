@@ -1,4 +1,4 @@
-import 'package:cep_app/features/cep/domain/use_cases/get_cep_details_by_cep.dart';
+import 'package:cep_app/features/cep/domain/use_cases/search_address_by_cep.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/providers/cep_app_provider.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_notifier.dart';
@@ -9,9 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final searchByCepNotifierProvider =
     StateNotifierProvider<SearchByCepNotifier, CepAppState>((ref) {
       // Lê o UseCase injetado no arquivo central de dependências (cep_app_provider.dart)
-      final getCepDetailsByCepInstance = ref.read<GetCepDetailsByCep>(
-        getCepDetailsByCepProvider,
+      final SearchAddressByCepInstance = ref.read<SearchAddressByCep>(
+        SearchAddressByCepProvider,
       );
 
-      return SearchByCepNotifier(getCepDetailsByCepInstance);
+      return SearchByCepNotifier(SearchAddressByCepInstance);
     });
