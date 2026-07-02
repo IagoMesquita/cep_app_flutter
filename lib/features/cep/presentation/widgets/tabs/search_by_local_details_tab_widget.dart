@@ -30,14 +30,23 @@ class _SearchByLocalDetailsTabWidgetState
     with SearchCepLocalDetailsMixin {
   final formKey = GlobalKey<FormState>();
 
-  void onSearchByLocalDetails(SearchByLocalDetailsNotifier notifier) {
+  void onSearchByLocalDetails() {
     if (formKey.currentState!.validate()) {
-      final body = SearchByAddressParams(
-        estado: estadoTEC.text,
-        cidade: cidadeTEC.text,
-        rua: ruaTEC.text,
-      );
-      notifier.loadAddressByLocalDetails(body);
+      // final body = SearchByAddressParams(
+      //   estado: estadoTEC.text,
+      //   cidade: cidadeTEC.text,
+      //   rua: ruaTEC.text,
+      // );
+      // notifier.loadAddressByLocalDetails(body);
+
+      // Clean Code: Evita instanciar classes de domínio diretamente nos widgets da UI.
+      ref
+          .read(searchByLocalDetailsNotifierProvider.notifier)
+          .loadAddressByLocalDetails(
+            estado: estadoTEC.text,
+            cidade: cidadeTEC.text,
+            rua: ruaTEC.text,
+          );
     }
   }
 
@@ -112,7 +121,7 @@ class _SearchByLocalDetailsTabWidgetState
                   if (state is CepStateLoading) return;
 
                   FocusScope.of(context).requestFocus(FocusNode());
-                  onSearchByLocalDetails(notifier);
+                  onSearchByLocalDetails();
                 },
               ),
               const SizedBox(height: 16),

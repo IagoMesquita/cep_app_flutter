@@ -13,12 +13,20 @@ final class SearchByLocalDetailsNotifier extends StateNotifier<CepAppState> {
 
   bool get isLoading => state is CepStateLoading;
 
-  Future<void> loadAddressByLocalDetails(
-    SearchByAddressParams addressParams,
-  ) async {
+  Future<void> loadAddressByLocalDetails({
+    required String estado,
+    required String cidade,
+    required String rua,
+  }) async {
     state = const CepStateLoading();
 
-    final cepEither = await _searchCepsByAddressDetails(addressParams);
+    final params = SearchByAddressParams(
+      estado: estado,
+      cidade: cidade,
+      rua: rua,
+    );
+
+    final cepEither = await _searchCepsByAddressDetails(params);
 
     switch (cepEither) {
       case Left(value: final failure):

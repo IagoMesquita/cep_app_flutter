@@ -36,12 +36,9 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
   }
 
   void onSearchCep() {
-    final notifier = ref.read<SearchByCepNotifier>(
-      searchByCepNotifierProvider.notifier,
-    );
-
     if (formKey.currentState!.validate()) {
-      notifier.loadAddressByCep(SearchByCepParams(cep: cepTEC.text));
+      ref.read(searchByCepNotifierProvider.notifier)
+        .loadAddressByCep(cepTEC.text);
     }
   }
 

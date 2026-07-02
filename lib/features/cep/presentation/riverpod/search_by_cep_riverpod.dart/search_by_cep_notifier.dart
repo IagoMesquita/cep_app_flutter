@@ -15,11 +15,12 @@ final class SearchByCepNotifier extends StateNotifier<CepAppState> {
   // Um getter prático caso a UI só queira saber se trava um botão, por exemplo
   bool get isLoading => state is CepStateLoading;
 
-  Future<void> loadAddressByCep(SearchByCepParams cep) async {
+  Future<void> loadAddressByCep(String cep) async {
     // 1. Emitimos o estado de carregamento imediatamente
     state = const CepStateLoading();
 
-    final cepEither = await _searchAddressByCep(cep);
+    final params = SearchByCepParams(cep: cep);
+    final cepEither = await _searchAddressByCep(params);
 
     // 2. Pattern Matching limpo do resultado
     switch (cepEither) {
