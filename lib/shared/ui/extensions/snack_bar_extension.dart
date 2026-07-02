@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' show BuildContext, ScaffoldMessenger, SnackBar, Text, Colors;
 
-enum SnackBarType { success, error }
+enum SnackBarType { success, error, warning }
 
 extension SnackBarExtension on BuildContext {
   void showSnackBar(SnackBarType snackBarType, String message) {
@@ -12,6 +12,7 @@ extension SnackBarExtension on BuildContext {
           backgroundColor: switch (snackBarType) {
             SnackBarType.success => Colors.green,
             SnackBarType.error => Colors.redAccent,
+            SnackBarType.warning => Colors.amberAccent,
           },
         ),
       );

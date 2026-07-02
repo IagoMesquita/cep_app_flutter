@@ -4,7 +4,6 @@ import 'package:cep_app/features/cep/presentation/constants/validation_messages_
 import 'package:cep_app/features/cep/presentation/mixins/search_cep_local_details_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/local_details_notifier_provider.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/search_by_local_details_riverpod/search_by_local_details_notifier.dart';
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
@@ -32,13 +31,6 @@ class _SearchByLocalDetailsTabWidgetState
 
   void onSearchByLocalDetails() {
     if (formKey.currentState!.validate()) {
-      // final body = SearchByAddressParams(
-      //   estado: estadoTEC.text,
-      //   cidade: cidadeTEC.text,
-      //   rua: ruaTEC.text,
-      // );
-      // notifier.loadAddressByLocalDetails(body);
-
       // Clean Code: Evita instanciar classes de domínio diretamente nos widgets da UI.
       ref
           .read(searchByLocalDetailsNotifierProvider.notifier)
@@ -58,12 +50,11 @@ class _SearchByLocalDetailsTabWidgetState
       next,
     ) {
       if (next is SearchByLocalDetailsOfflineSuccessState && context.mounted) {
-        context.showSnackBar(SnackBarType.error, next.warningMessage);
+        context.showSnackBar(SnackBarType.warning, next.warningMessage);
       }
     });
 
     final state = ref.watch(searchByLocalDetailsNotifierProvider);
-    final notifier = ref.watch(searchByLocalDetailsNotifierProvider.notifier);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),

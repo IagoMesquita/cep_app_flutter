@@ -1,5 +1,4 @@
 import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
-import 'package:cep_app/features/cep/domain/use_cases/params/search_by_cep_params.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
 import 'package:cep_app/features/cep/presentation/mixins/cep_tec_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
@@ -47,7 +46,7 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
     // Escuta o estado para disparar efeitos colaterais visuais (Ex: SnackBars)
     ref.listen<CepAppState>(searchByCepNotifierProvider, (previous, next) {
       if (next is SearchByCepOfflineSuccessState && context.mounted) {
-        context.showSnackBar(SnackBarType.error, next.warningMessage);
+        context.showSnackBar(SnackBarType.warning, next.warningMessage);
       }
     });
 
