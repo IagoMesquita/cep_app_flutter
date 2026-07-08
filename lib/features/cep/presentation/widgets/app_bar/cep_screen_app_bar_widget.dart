@@ -28,18 +28,14 @@ class _CepScreenAppBarWidgetState extends ConsumerState<CepScreenAppBarWidget>
   @override
   void initState() {
     ref.read<ThemeNotifier>(themeNotifierProvider.notifier).initThemeState();
-    tabCtrl = TabController(length: 2, vsync: this)
-      ..addListener(onTabIndexChange);
+    tabCtrl = TabController(length: widget.tabs.length, vsync: this);
     super.initState();
   }
 
-  void onTabIndexChange() {
-    setState(() {});
-  }
 
   @override
   void dispose() {
-    tabCtrl.removeListener(onTabIndexChange);
+    tabCtrl.dispose();
     super.dispose();
   }
 
@@ -69,7 +65,7 @@ class _CepScreenAppBarWidgetState extends ConsumerState<CepScreenAppBarWidget>
           ],
         ),
       ),
-      body: widget.tabs[tabCtrl.index],
+      body: TabBarView(controller: tabCtrl, children: widget.tabs),
     );
   }
 }
