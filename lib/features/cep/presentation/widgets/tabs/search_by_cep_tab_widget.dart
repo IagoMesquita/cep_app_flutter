@@ -3,7 +3,6 @@ import 'package:cep_app/features/cep/presentation/constants/validation_messages_
 import 'package:cep_app/features/cep/presentation/mixins/cep_tec_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/cep_notifier_provider.dart';
-import 'package:cep_app/features/cep/presentation/riverpod/search_by_cep_riverpod.dart/search_by_cep_notifier.dart';
 import 'package:cep_app/features/cep/presentation/widgets/buttons/cep_button_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/inputs/cep_text_field_widget.dart';
 import 'package:cep_app/features/cep/presentation/widgets/no_result_widget/no_result_widget.dart';
@@ -36,8 +35,9 @@ class _SearchByCepTabWidgetState extends ConsumerState<SearchByCepTabWidget>
 
   void onSearchCep() {
     if (formKey.currentState!.validate()) {
-      ref.read(searchByCepNotifierProvider.notifier)
-        .loadAddressByCep(cepTEC.text);
+      ref
+          .read(searchByCepNotifierProvider.notifier)
+          .loadAddressByCep(cepTEC.text);
     }
   }
 
@@ -117,18 +117,45 @@ class _AddressResult extends StatelessWidget {
     return Column(
       children: [
         Text('Resultado:', style: context.getTextTheme.titleLarge),
-        const SizedBox(height: 32),
-        Column(
-          children: [
-            Text(address.cep),
-            const SizedBox(height: 8),
-            Text(address.localidade),
-            const SizedBox(height: 8),
-            Text(address.bairro),
-            const SizedBox(height: 8),
-            Text(address.uf),
-            const SizedBox(height: 8),
-          ],
+        // const SizedBox(height: 32),
+        const SizedBox(height: 16),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'CEP: ${address.cep}',
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold // Força o subtítulo a ser escuro
+                  ),
+                ),
+                const Divider(),
+                Text(
+                  'Cidade: ${address.localidade} - ${address.uf}',
+                  style: const TextStyle(
+                    color: Colors.black87, // Força o subtítulo a ser escuro
+                  ),
+                ),
+                if (address.bairro.isNotEmpty)
+                  Text(
+                    'Bairro: ${address.bairro}',
+                    style: const TextStyle(
+                      color: Colors.black54, // Força o subtítulo a ser escuro
+                    ),
+                  ),
+                if (address.logradouro.isNotEmpty)
+                  Text(
+                    'Logradouro: ${address.logradouro}',
+                    style: const TextStyle(
+                      color: Colors.black54, // Força o subtítulo a ser escuro
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ],
     );
