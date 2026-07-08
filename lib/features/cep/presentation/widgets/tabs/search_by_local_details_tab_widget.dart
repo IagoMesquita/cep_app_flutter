@@ -1,5 +1,4 @@
 import 'package:cep_app/features/cep/domain/entities/address_entity.dart';
-import 'package:cep_app/features/cep/domain/use_cases/params/search_by_address_params.dart';
 import 'package:cep_app/features/cep/presentation/constants/validation_messages_const.dart';
 import 'package:cep_app/features/cep/presentation/mixins/search_cep_local_details_mixin.dart';
 import 'package:cep_app/features/cep/presentation/riverpod/cep_app_state.dart';
@@ -146,30 +145,42 @@ class _AddressesListResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 32),
-        Text('Resultados:', style: context.getTextTheme.titleLarge),
-        const SizedBox(height: 32),
-        Column(
-          children: addressesList
-              .map(
-                (localDetailsItem) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Column(
-                    children: [
-                      Text(localDetailsItem.cep),
-                      const SizedBox(height: 8),
-                      Text(localDetailsItem.localidade),
-                      const SizedBox(height: 8),
-                      Text(localDetailsItem.bairro),
-                      const SizedBox(height: 8),
-                      Text(localDetailsItem.uf),
-                      const SizedBox(height: 8),
-                    ],
+        const SizedBox(height: 24),
+        // Text('Resultados:', style: context.getTextTheme.titleLarge),
+        Text(
+          'Resultados encontrados (${addressesList.length}):',
+          style: context.getTextTheme.titleLarge,
+        ),
+        const SizedBox(height: 16),
+        // Flutter Performance: Substituído o map().toList() por um construtor otimizado e sob demanda
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: addressesList.length,
+          itemBuilder: (ctx, index) {
+            final item = addressesList[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              child: ListTile(
+                title: Text(
+                  item.cep,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
-              .toList(),
+                subtitle: Text(
+                  '${item.logradouro}\n${item.bairro} - ${item.localidade}/${item.uf}',
+                  style: const TextStyle(
+                    color: Colors.black54, // Força o subtítulo a ser escuro
+                  ),
+                ),
+                isThreeLine: true,
+              ),
+            );
+          },
         ),
       ],
     );
