@@ -12,7 +12,7 @@ class CepScreen extends StatelessWidget {
       title: 'Cep App - Clean Architecture',
       tabs: [
         SearchByCepTabWidget(),
-        Center(child: SearchByLocalDetailsTabWidget(),),
+        SearchByLocalDetailsTabWidget(),
       ],
     );
   }
